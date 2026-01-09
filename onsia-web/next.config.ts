@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "cluster-honorsville.co.kr",
+      },
+      {
+        protocol: "https",
+        hostname: "*.co.kr",
+      },
     ],
   },
 };
