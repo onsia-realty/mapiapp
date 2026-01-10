@@ -47,6 +47,105 @@ export default function BunyanggwonDetailPage() {
   const [rankingCategory, setRankingCategory] = useState<RankingCategory>("composite");
   const [selectedBusStop, setSelectedBusStop] = useState<NearbyBusStop | null>(null);
 
+  // 좌표 기반 데이터 조회 (학교, 지하철, 버스)
+  const fetchLocationBasedData = async (coords: { lat: number; lng: number }, address: string) => {
+    try {
+      // 학교 조회
+      const schoolsResponse = await fetch(
+        `/api/schools?lat=${coords.lat}&lng=${coords.lng}&address=${encodeURIComponent(address)}&radius=1.5`
+      );
+      const schoolsResult: SchoolsApiResponse = await schoolsResponse.json();
+      if (schoolsResult.success && schoolsResult.data) {
+        console.log(`🏫 주변 학교 로드 완료: 초등 ${schoolsResult.data.elementary.length}개, 중등 ${schoolsResult.data.middle.length}개, 고등 ${schoolsResult.data.high.length}개`);
+        setNearbySchools({
+          elementary: schoolsResult.data.elementary,
+          middle: schoolsResult.data.middle,
+          high: schoolsResult.data.high,
+        });
+      }
+
+      // 지하철 조회
+      const subwayResponse = await fetch(
+        `/api/subway?lat=${coords.lat}&lng=${coords.lng}&radius=2&limit=5`
+      );
+      const subwayResult: SubwayApiResponse = await subwayResponse.json();
+      if (subwayResult.success && subwayResult.data) {
+        console.log(`🚇 주변 지하철역 로드 완료: ${subwayResult.data.length}개`);
+        setNearbySubways(subwayResult.data);
+      }
+
+      // 버스 조회
+      const busResponse = await fetch(
+        `/api/bus?lat=${coords.lat}&lng=${coords.lng}&address=${encodeURIComponent(address)}&radius=0.5&limit=5`
+      );
+      const busResult: BusApiResponse = await busResponse.json();
+      if (busResult.success && busResult.data) {
+        console.log(`🚌 주변 버스정류장 로드 완료: ${busResult.data.length}개`);
+        setNearbyBusStops(busResult.data);
+      }
+    } catch (error) {
+      console.error("위치 기반 데이터 조회 오류:", error);
+    }
+  };
+
+  // 카카오 Geocoder로 주소 → 좌표 변환 (5초 타임아웃)
+  const geocodeAddress = (address: string): Promise<{ lat: number; lng: number } | null> => {
+    return new Promise((resolve) => {
+      let resolved = false;
+      let checkCount = 0;
+      const maxChecks = 50; // 5초 (100ms * 50)
+
+      const doGeocode = () => {
+        if (resolved) return;
+
+        window.kakao.maps.load(() => {
+          if (resolved) return;
+
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          geocoder.addressSearch(address, (result: any, status: any) => {
+            if (resolved) return;
+            resolved = true;
+
+            if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+              const coords = {
+                lat: parseFloat(result[0].y),
+                lng: parseFloat(result[0].x)
+              };
+              console.log(`📍 주소 좌표 변환 완료: ${address} → ${coords.lat}, ${coords.lng}`);
+              resolve(coords);
+            } else {
+              console.warn(`⚠️ 주소 좌표 변환 실패: ${address}`);
+              resolve(null);
+            }
+          });
+        });
+      };
+
+      if (window.kakao && window.kakao.maps) {
+        doGeocode();
+      } else {
+        console.warn("카카오맵 SDK 로드 대기 중...");
+        const checkKakao = setInterval(() => {
+          checkCount++;
+          if (checkCount >= maxChecks) {
+            clearInterval(checkKakao);
+            if (!resolved) {
+              resolved = true;
+              console.error("⏱️ 카카오맵 SDK 로드 타임아웃");
+              resolve(null);
+            }
+            return;
+          }
+
+          if (window.kakao && window.kakao.maps) {
+            clearInterval(checkKakao);
+            doGeocode();
+          }
+        }, 100);
+      }
+    });
+  };
+
   // API 데이터 로딩
   useEffect(() => {
     async function fetchData() {
@@ -67,9 +166,21 @@ export default function BunyanggwonDetailPage() {
           console.log("✅ 청약홈 API 데이터 로드 완료:", bunyanggwonResult.data.propertyName);
           setBunyanggwonData(bunyanggwonResult.data);
 
-          // Mock 데이터에서 좌표 가져오기
+          // 좌표 가져오기: Mock 데이터 우선, 없으면 Geocoding (비동기)
           if (mockItem?.latitude && mockItem?.longitude) {
-            setCoordinates({ lat: mockItem.latitude, lng: mockItem.longitude });
+            const coords = { lat: mockItem.latitude, lng: mockItem.longitude };
+            setCoordinates(coords);
+            // 좌표 기반 API 호출 (학교, 지하철, 버스)
+            fetchLocationBasedData(coords, bunyanggwonResult.data.address);
+          } else {
+            // 주소로 좌표 변환 (비동기로 실행, 블로킹하지 않음)
+            geocodeAddress(bunyanggwonResult.data.address).then((geocodedCoords) => {
+              if (geocodedCoords) {
+                setCoordinates(geocodedCoords);
+                // 좌표 기반 API 호출 (학교, 지하철, 버스)
+                fetchLocationBasedData(geocodedCoords, bunyanggwonResult.data.address);
+              }
+            });
           }
 
           // 3. 주변 시세 조회
@@ -105,65 +216,26 @@ export default function BunyanggwonDetailPage() {
             setRealEstateListings(listingsData);
           }
 
-          // 6. 주변 학교 조회
-          if (mockItem?.latitude && mockItem?.longitude) {
-            const schoolsResponse = await fetch(
-              `/api/schools?lat=${mockItem.latitude}&lng=${mockItem.longitude}&address=${encodeURIComponent(bunyanggwonResult.data.address)}&radius=1.5`
-            );
-            const schoolsResult: SchoolsApiResponse = await schoolsResponse.json();
+          // 6. 주변 입주예정 아파트 조회 (주소 기반, 좌표 불필요)
+          const upcomingResponse = await fetch(
+            `/api/upcoming-apartments?address=${encodeURIComponent(bunyanggwonResult.data.address)}&excludeId=${apiId}&limit=5`
+          );
+          const upcomingResult = await upcomingResponse.json();
 
-            if (schoolsResult.success && schoolsResult.data) {
-              console.log(`🏫 주변 학교 로드 완료: 초등 ${schoolsResult.data.elementary.length}개, 중등 ${schoolsResult.data.middle.length}개, 고등 ${schoolsResult.data.high.length}개`);
-              setNearbySchools({
-                elementary: schoolsResult.data.elementary,
-                middle: schoolsResult.data.middle,
-                high: schoolsResult.data.high,
-              });
-            }
+          if (upcomingResult.success && upcomingResult.data) {
+            console.log(`🏠 입주예정 아파트 로드 완료: ${upcomingResult.data.length}개`);
+            setUpcomingApartments(upcomingResult.data);
+          }
 
-            // 7. 주변 지하철역 조회
-            const subwayResponse = await fetch(
-              `/api/subway?lat=${mockItem.latitude}&lng=${mockItem.longitude}&radius=2&limit=5`
-            );
-            const subwayResult: SubwayApiResponse = await subwayResponse.json();
+          // 10. 아파트 순위 조회
+          const rankingResponse = await fetch(
+            `/api/apartment-ranking?address=${encodeURIComponent(bunyanggwonResult.data.address)}&limit=5`
+          );
+          const rankingResult = await rankingResponse.json();
 
-            if (subwayResult.success && subwayResult.data) {
-              console.log(`🚇 주변 지하철역 로드 완료: ${subwayResult.data.length}개`);
-              setNearbySubways(subwayResult.data);
-            }
-
-            // 8. 주변 버스 정류장 조회
-            const busResponse = await fetch(
-              `/api/bus?lat=${mockItem.latitude}&lng=${mockItem.longitude}&address=${encodeURIComponent(bunyanggwonResult.data.address)}&radius=0.5&limit=5`
-            );
-            const busResult: BusApiResponse = await busResponse.json();
-
-            if (busResult.success && busResult.data) {
-              console.log(`🚌 주변 버스정류장 로드 완료: ${busResult.data.length}개`);
-              setNearbyBusStops(busResult.data);
-            }
-
-            // 9. 주변 입주예정 아파트 조회
-            const upcomingResponse = await fetch(
-              `/api/upcoming-apartments?address=${encodeURIComponent(bunyanggwonResult.data.address)}&excludeId=${apiId}&limit=5`
-            );
-            const upcomingResult = await upcomingResponse.json();
-
-            if (upcomingResult.success && upcomingResult.data) {
-              console.log(`🏠 입주예정 아파트 로드 완료: ${upcomingResult.data.length}개`);
-              setUpcomingApartments(upcomingResult.data);
-            }
-
-            // 10. 아파트 순위 조회
-            const rankingResponse = await fetch(
-              `/api/apartment-ranking?address=${encodeURIComponent(bunyanggwonResult.data.address)}&limit=5`
-            );
-            const rankingResult = await rankingResponse.json();
-
-            if (rankingResult.success && rankingResult.data) {
-              console.log(`📊 아파트 순위 로드 완료: ${rankingResult.data.regionName}`);
-              setApartmentRanking(rankingResult.data);
-            }
+          if (rankingResult.success && rankingResult.data) {
+            console.log(`📊 아파트 순위 로드 완료: ${rankingResult.data.regionName}`);
+            setApartmentRanking(rankingResult.data);
           }
         } else if (mockItem) {
           // API 데이터가 없으면 mock 데이터 사용 (fallback)
@@ -729,9 +801,9 @@ export default function BunyanggwonDetailPage() {
           </div>
         </div>
 
-        {/* 주변 상권 정보 */}
+        {/* 물건 위치도 정보 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">주변 상권 정보</h2>
+          <h2 className="text-sm font-bold text-gray-900 mb-3">물건 위치도 정보</h2>
           {coordinates ? (
             <>
               <div className="rounded-xl overflow-hidden mb-3">
