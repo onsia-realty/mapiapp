@@ -13,7 +13,8 @@ import {
   TransactionApiParams,
 } from '@/types/real-transaction';
 
-const API_KEY = process.env.DATA_GO_KR_API_KEY || '';
+// 런타임에 환경 변수 읽기 (서버리스 환경 대응)
+const getApiKey = () => process.env.DATA_GO_KR_API_KEY || '';
 
 // API 엔드포인트 (상세자료)
 const APT_TRADE_DEV_API = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev';
@@ -105,7 +106,7 @@ function generateId(type: string, aptName: string, dealYear: string, dealMonth: 
 export async function fetchAptTrades(params: TransactionApiParams): Promise<TradeTransaction[]> {
   const { lawdCd, dealYmd, pageNo = 1, numOfRows = 100 } = params;
 
-  const url = `${APT_TRADE_DEV_API}?serviceKey=${API_KEY}&LAWD_CD=${lawdCd}&DEAL_YMD=${dealYmd}&pageNo=${pageNo}&numOfRows=${numOfRows}`;
+  const url = `${APT_TRADE_DEV_API}?serviceKey=${getApiKey()}&LAWD_CD=${lawdCd}&DEAL_YMD=${dealYmd}&pageNo=${pageNo}&numOfRows=${numOfRows}`;
 
   console.log('[RealTransaction API] 매매 상세 조회:', { lawdCd, dealYmd });
 
@@ -164,7 +165,7 @@ export async function fetchAptTrades(params: TransactionApiParams): Promise<Trad
 export async function fetchAptRents(params: TransactionApiParams): Promise<RentTransaction[]> {
   const { lawdCd, dealYmd, pageNo = 1, numOfRows = 100 } = params;
 
-  const url = `${APT_RENT_API}?serviceKey=${API_KEY}&LAWD_CD=${lawdCd}&DEAL_YMD=${dealYmd}&pageNo=${pageNo}&numOfRows=${numOfRows}`;
+  const url = `${APT_RENT_API}?serviceKey=${getApiKey()}&LAWD_CD=${lawdCd}&DEAL_YMD=${dealYmd}&pageNo=${pageNo}&numOfRows=${numOfRows}`;
 
   console.log('[RealTransaction API] 전월세 조회:', { lawdCd, dealYmd });
 
@@ -256,7 +257,7 @@ export async function fetchAptPresales(params: TransactionApiParams): Promise<Pr
   const { lawdCd, dealYmd, pageNo = 1, numOfRows = 100 } = params;
 
   // 분양권전매 API 엔드포인트
-  const url = `https://apis.data.go.kr/1613000/RTMSDataSvcSilvTrade/getRTMSDataSvcSilvTrade?serviceKey=${API_KEY}&LAWD_CD=${lawdCd}&DEAL_YMD=${dealYmd}&pageNo=${pageNo}&numOfRows=${numOfRows}`;
+  const url = `https://apis.data.go.kr/1613000/RTMSDataSvcSilvTrade/getRTMSDataSvcSilvTrade?serviceKey=${getApiKey()}&LAWD_CD=${lawdCd}&DEAL_YMD=${dealYmd}&pageNo=${pageNo}&numOfRows=${numOfRows}`;
 
   console.log('[RealTransaction API] 분양권전매 조회:', { lawdCd, dealYmd });
 

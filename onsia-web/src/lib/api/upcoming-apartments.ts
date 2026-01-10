@@ -4,7 +4,8 @@
 
 import { BunyanggwonData } from "@/types/api";
 
-const API_KEY = process.env.DATA_GO_KR_API_KEY || "";
+// 런타임에 환경 변수 읽기 (서버리스 환경 대응)
+const getApiKey = () => process.env.DATA_GO_KR_API_KEY || "";
 const BASE_URL = "https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1";
 
 /**
@@ -51,7 +52,7 @@ export async function getNearbyUpcomingApartments(
     const queryParams = new URLSearchParams({
       page: "1",
       perPage: "100", // 더 많이 가져와서 필터링
-      serviceKey: API_KEY,
+      serviceKey: getApiKey(),
     });
 
     if (regionCode) {

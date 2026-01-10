@@ -8,7 +8,8 @@
 
 import { extractLocationFromAddress } from "./upcoming-apartments";
 
-const API_KEY = process.env.DATA_GO_KR_API_KEY || "";
+// 런타임에 환경 변수 읽기 (서버리스 환경 대응)
+const getApiKey = () => process.env.DATA_GO_KR_API_KEY || "";
 const TRADE_API_URL =
   "https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade/getRTMSDataSvcAptTrade";
 const RENT_API_URL =
@@ -151,7 +152,7 @@ export async function getApartmentRanking(
   console.log(`📊 아파트 순위 조회: ${regionName} (코드: ${regionCode})`);
 
   // API 호출
-  if (regionCode && API_KEY) {
+  if (regionCode && getApiKey()) {
     try {
       // 매매/전세 데이터 병렬 조회
       const [tradeData, rentData] = await Promise.all([
@@ -215,7 +216,7 @@ async function fetchTradeData(
     try {
       const dealYm = `${period.year}${String(period.month).padStart(2, "0")}`;
       const queryParams = new URLSearchParams({
-        serviceKey: API_KEY,
+        serviceKey: getApiKey(),
         LAWD_CD: regionCode,
         DEAL_YMD: dealYm,
         pageNo: "1",
@@ -252,7 +253,7 @@ async function fetchRentData(
     try {
       const dealYm = `${period.year}${String(period.month).padStart(2, "0")}`;
       const queryParams = new URLSearchParams({
-        serviceKey: API_KEY,
+        serviceKey: getApiKey(),
         LAWD_CD: regionCode,
         DEAL_YMD: dealYm,
         pageNo: "1",

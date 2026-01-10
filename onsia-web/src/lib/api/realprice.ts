@@ -9,7 +9,8 @@ import { promisify } from "util";
 
 const parseXML = promisify(parseString);
 
-const API_KEY = process.env.DATA_GO_KR_API_KEY || "";
+// 런타임에 환경 변수 읽기 (서버리스 환경 대응)
+const getApiKey = () => process.env.DATA_GO_KR_API_KEY || "";
 const BASE_URL = "https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade";
 
 /**
@@ -34,7 +35,7 @@ export async function getNearbyRealPrice(
     const targetYearMonth = yearMonth || getPreviousYearMonth(2);
 
     const queryParams = new URLSearchParams({
-      serviceKey: API_KEY,
+      serviceKey: getApiKey(),
       LAWD_CD: regionCode, // 지역코드 (5자리)
       DEAL_YMD: targetYearMonth, // 거래년월 (YYYYMM)
       numOfRows: "100",
@@ -46,7 +47,7 @@ export async function getNearbyRealPrice(
       address,
       regionCode,
       targetYearMonth,
-      apiUrl: apiUrl.replace(API_KEY, "***KEY***"),
+      apiUrl: apiUrl.replace(getApiKey(), "***KEY***"),
     });
 
     const response = await fetch(apiUrl, {

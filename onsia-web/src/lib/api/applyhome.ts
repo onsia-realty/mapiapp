@@ -5,7 +5,8 @@
 
 import { BunyanggwonData, PriceByType } from "@/types/api";
 
-const API_KEY = process.env.DATA_GO_KR_API_KEY || "";
+// 런타임에 환경 변수 읽기 (서버리스 환경 대응)
+const getApiKey = () => process.env.DATA_GO_KR_API_KEY || "";
 const BASE_URL = "https://api.odcloud.kr/api/ApplyhomeInfoDetailSvc/v1";
 
 /**
@@ -26,7 +27,7 @@ export async function getApplyHomeList(params: {
     const queryParams = new URLSearchParams({
       page: (params.page || 1).toString(),
       perPage: (params.perPage || 10).toString(),
-      serviceKey: API_KEY,
+      serviceKey: getApiKey(),
     });
 
     // 조건 파라미터 추가 (cond[FIELD::OPERATOR] 형식)
@@ -184,7 +185,7 @@ async function getApplyHomePriceInfo(id: string): Promise<PriceByType[]> {
     const queryParams = new URLSearchParams({
       page: "1",
       perPage: "50",
-      serviceKey: API_KEY,
+      serviceKey: getApiKey(),
     });
     queryParams.append("cond[HOUSE_MANAGE_NO::EQ]", id);
 
@@ -243,7 +244,7 @@ export async function getApplyHomeDetail(id: string): Promise<BunyanggwonData | 
     const queryParams = new URLSearchParams({
       page: "1",
       perPage: "100", // 더 많은 데이터에서 검색
-      serviceKey: API_KEY,
+      serviceKey: getApiKey(),
     });
 
     // ID 조건 추가
