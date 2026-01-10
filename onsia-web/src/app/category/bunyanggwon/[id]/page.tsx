@@ -484,9 +484,9 @@ export default function BunyanggwonDetailPage() {
               </thead>
               <tbody>
                 {item.priceInfo && item.priceInfo.length > 0 ? (
-                  item.priceInfo.map((priceItem) => (
+                  item.priceInfo.map((priceItem, index) => (
                     <tr
-                      key={priceItem.type}
+                      key={`${priceItem.type}-${index}`}
                       className={`bg-white border-b border-gray-100 ${selectedPyeong === priceItem.type ? 'bg-purple-50' : ''}`}
                     >
                       <td className="px-3 py-3 text-gray-900 font-medium">
