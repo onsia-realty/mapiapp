@@ -160,7 +160,13 @@ export interface PriceByType {
  */
 export interface NearbyPriceData {
   apartmentName: string; // 아파트명
-  address: string; // 주소
+  roadAddress: string; // 도로명주소
+  jibunAddress: string; // 지번주소
+  latitude: number; // 위도
+  longitude: number; // 경도
+  operationStatus: string; // 운영상태
+  sidoOffice: string; // 시도교육청명
+  localOffice: string; // 교육지원청명
   exclusiveArea: number; // 전용면적(㎡)
   pyeong: number; // 평수
   recentPrice: number; // 최근 거래가 (만원)
@@ -184,4 +190,91 @@ export interface PropertyImages {
 export interface FloorPlanImage {
   type: string; // 타입명 (84A, 84B, 123 등)
   imageUrl: string; // 평면도 이미지 URL
+}
+
+/**
+ * 주변 학교 데이터
+ */
+export interface NearbySchool {
+  schoolId: string; // 학교ID
+  schoolName: string; // 학교명
+  schoolType: string; // 학교급구분 (초등학교, 중학교, 고등학교)
+  foundationType: string; // 설립형태 (공립, 사립)
+  roadAddress: string; // 도로명주소
+  jibunAddress: string; // 지번주소
+  latitude: number; // 위도
+  longitude: number; // 경도
+  operationStatus: string; // 운영상태
+  sidoOffice: string; // 시도교육청명
+  localOffice: string; // 교육지원청명
+  distance: number; // 거리 (km)
+  walkingTime: number; // 도보시간 (분)
+}
+
+/**
+ * 학교 API 응답
+ */
+export interface SchoolsApiResponse {
+  success: boolean;
+  data: {
+    elementary: NearbySchool[]; // 초등학교
+    middle: NearbySchool[]; // 중학교
+    high: NearbySchool[]; // 고등학교
+    kindergarten: NearbySchool[]; // 유치원
+  };
+  message?: string;
+}
+
+/**
+ * 주변 지하철역 데이터
+ */
+export interface NearbySubwayStation {
+  stationId: string; // 역번호
+  stationName: string; // 역사명
+  lineName: string; // 노선명
+  lineNumber: string; // 노선 번호 (1, 2, 3... 또는 K, B 등)
+  lineColor: string; // 노선 색상 (hex)
+  isTransfer: boolean; // 환승역 여부
+  transferLines: string | null; // 환승 노선명
+  distance: number; // 거리 (km)
+  walkingTime: number; // 도보시간 (분)
+  roadAddress: string; // 도로명주소
+  jibunAddress: string; // 지번주소
+  latitude: number; // 위도
+  longitude: number; // 경도
+  operationStatus: string; // 운영상태
+  sidoOffice: string; // 시도교육청명
+  localOffice: string; // 교육지원청명
+}
+
+/**
+ * 지하철역 API 응답
+ */
+export interface SubwayApiResponse {
+  success: boolean;
+  data: NearbySubwayStation[];
+  message?: string;
+}
+
+/**
+ * 주변 버스 정류장 데이터
+ */
+export interface NearbyBusStop {
+  stationId: string; // 정류장번호
+  stationName: string; // 정류장명
+  latitude: number; // 위도
+  longitude: number; // 경도
+  cityName: string; // 도시명
+  mobileNumber: number; // 모바일단축번호
+  distance: number; // 거리 (km)
+  walkingTime: number; // 도보시간 (분)
+}
+
+/**
+ * 버스 정류장 API 응답
+ */
+export interface BusApiResponse {
+  success: boolean;
+  data: NearbyBusStop[];
+  message?: string;
 }
