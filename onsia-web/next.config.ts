@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.com",
       },
+      {
+        protocol: "https",
+        hostname: "*.kr",
+      },
     ],
   },
 };
