@@ -33,7 +33,8 @@ export const mockBunyanggwon: Bunyanggwon[] = [
   },
   {
     id: "BUN002",
-    propertyName: "중흥S-클래스더포레",
+    apiId: "2025000450", // 청약홈 API ID - 중흥S-클래스 힐더포레
+    propertyName: "중흥S-클래스 힐더포레",
     address: "경기도 구리시 교문동",
     type: "APARTMENT",
     pyeong: "84B",
