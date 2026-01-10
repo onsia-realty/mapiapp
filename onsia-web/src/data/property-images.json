@@ -1,0 +1,28 @@
+{
+  "2025000189": {
+    "birdEyeView": "https://cluster-honorsville.co.kr/img/sub/business_open_n2.jpg?new",
+    "siteLayout": "https://cluster-honorsville.co.kr/img/sub/dange_01_n4.jpg?new",
+    "premium": "https://cluster-honorsville.co.kr/img/sub/premium_n5.jpg?new",
+    "floorPlans": [
+      {
+        "type": "84A",
+        "imageUrl": "https://cluster-honorsville.co.kr/img/sub/floor01.jpg?new"
+      },
+      {
+        "type": "84B",
+        "imageUrl": "https://cluster-honorsville.co.kr/img/sub/floor02.jpg?new"
+      },
+      {
+        "type": "123",
+        "imageUrl": "https://cluster-honorsville.co.kr/img/sub/floor03_n1.jpg?new"
+      }
+    ],
+    "gallery": [
+      "https://cluster-honorsville.co.kr/img/sub/business_open_n2.jpg?new",
+      "https://cluster-honorsville.co.kr/img/sub/premium_n5.jpg?new",
+      "https://cluster-honorsville.co.kr/img/sub/dange_01_n4.jpg?new"
+    ],
+    "source": "manual",
+    "updatedAt": "2025-01-10"
+  }
+}
