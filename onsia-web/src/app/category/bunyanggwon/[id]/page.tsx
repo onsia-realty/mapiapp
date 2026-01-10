@@ -171,22 +171,26 @@ export default function BunyanggwonDetailPage() {
           console.log("✅ 청약홈 API 데이터 로드 완료:", bunyanggwonResult.data.propertyName);
           setBunyanggwonData(bunyanggwonResult.data);
 
-          // 좌표 가져오기: Mock 데이터 우선, 없으면 Geocoding (비동기)
-          if (mockItem?.latitude && mockItem?.longitude) {
-            const coords = { lat: mockItem.latitude, lng: mockItem.longitude };
-            setCoordinates(coords);
-            // 좌표 기반 API 호출 (학교, 지하철, 버스)
-            fetchLocationBasedData(coords, bunyanggwonResult.data.address);
-          } else {
-            // 주소로 좌표 변환 (비동기로 실행, 블로킹하지 않음)
-            geocodeAddress(bunyanggwonResult.data.address).then((geocodedCoords) => {
-              if (geocodedCoords) {
-                setCoordinates(geocodedCoords);
-                // 좌표 기반 API 호출 (학교, 지하철, 버스)
-                fetchLocationBasedData(geocodedCoords, bunyanggwonResult.data.address);
+          // 좌표 가져오기: API 공급 주소로 Geocoding (항상 정확한 위치)
+          const supplyAddress = bunyanggwonResult.data.address;
+          console.log("📍 공급 주소로 좌표 검색:", supplyAddress);
+
+          geocodeAddress(supplyAddress).then((geocodedCoords) => {
+            if (geocodedCoords) {
+              console.log("✅ 좌표 변환 성공:", geocodedCoords);
+              setCoordinates(geocodedCoords);
+              // 좌표 기반 API 호출 (학교, 지하철, 버스)
+              fetchLocationBasedData(geocodedCoords, supplyAddress);
+            } else {
+              console.log("⚠️ 좌표 변환 실패, mock 데이터 사용");
+              // Geocoding 실패 시에만 mock 데이터 사용
+              if (mockItem?.latitude && mockItem?.longitude) {
+                const coords = { lat: mockItem.latitude, lng: mockItem.longitude };
+                setCoordinates(coords);
+                fetchLocationBasedData(coords, supplyAddress);
               }
-            });
-          }
+            }
+          });
 
           // 3. 주변 시세 조회
           const priceResponse = await fetch(
