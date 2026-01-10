@@ -13,6 +13,9 @@ import { BunyanggwonData, NearbyPriceData, PropertyImages, NearbySchool, Schools
 import { UpcomingApartment } from "@/lib/api/upcoming-apartments";
 import { ApartmentRankingResult, RankingCategory } from "@/lib/api/apartment-ranking";
 import { MapiListing } from "@/types/bunyanggwon";
+import { LoanCalculator } from "@/components/calculator/LoanCalculator";
+import { ComplexListingPreview } from "@/components/listing/ComplexListingPreview";
+import { RealEstateListing, getListingsByComplexId } from "@/lib/mock-listings";
 
 export default function BunyanggwonDetailPage() {
   const params = useParams();
@@ -23,6 +26,7 @@ export default function BunyanggwonDetailPage() {
   const [propertyImages, setPropertyImages] = useState<PropertyImages | null>(null);
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [mapiListings, setMapiListings] = useState<MapiListing[]>([]);
+  const [realEstateListings, setRealEstateListings] = useState<RealEstateListing[]>([]);
   const [nearbySchools, setNearbySchools] = useState<{
     elementary: NearbySchool[];
     middle: NearbySchool[];
@@ -39,7 +43,6 @@ export default function BunyanggwonDetailPage() {
   const [selectedPyeong, setSelectedPyeong] = useState("84A");
   const [showPyeongDropdown, setShowPyeongDropdown] = useState(false);
   const [schoolTab, setSchoolTab] = useState<"elementary" | "middle" | "high">("elementary");
-  const [developmentTab, setDevelopmentTab] = useState<"rail" | "road" | "construction">("rail");
   const [showMoreApartments, setShowMoreApartments] = useState(false);
   const [rankingCategory, setRankingCategory] = useState<RankingCategory>("composite");
   const [selectedBusStop, setSelectedBusStop] = useState<NearbyBusStop | null>(null);
@@ -93,6 +96,13 @@ export default function BunyanggwonDetailPage() {
           if (mapiData.length > 0) {
             console.log(`🏠 마피 매물 ${mapiData.length}건 로드 완료`);
             setMapiListings(mapiData);
+          }
+
+          // 5-1. 이 단지 매물 조회 (일반 매물 - 매매/전세/월세)
+          const listingsData = getListingsByComplexId(mockItem?.id || params.id as string);
+          if (listingsData.length > 0) {
+            console.log(`🏢 이 단지 매물 ${listingsData.length}건 로드 완료`);
+            setRealEstateListings(listingsData);
           }
 
           // 6. 주변 학교 조회
@@ -1026,83 +1036,17 @@ export default function BunyanggwonDetailPage() {
           </div>
         </div>
 
-        {/* 주변 개발 호재 */}
-        <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">주변 개발 호재</h2>
-          <p className="text-xs text-gray-600 mb-3">반경 1.5km 이내</p>
+        {/* 이 단지 매물 */}
+        <ComplexListingPreview
+          listings={realEstateListings}
+          complexId={params.id as string}
+        />
 
-          {/* 탭 */}
-          <div className="flex gap-2 mb-3">
-            <button
-              onClick={() => setDevelopmentTab("rail")}
-              className={`px-4 py-2 text-xs rounded-full font-medium ${
-                developmentTab === "rail"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600"
-              }`}
-            >
-              철도
-            </button>
-            <button
-              onClick={() => setDevelopmentTab("road")}
-              className={`px-4 py-2 text-xs rounded-full font-medium ${
-                developmentTab === "road"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600"
-              }`}
-            >
-              도로
-            </button>
-            <button
-              onClick={() => setDevelopmentTab("construction")}
-              className={`px-4 py-2 text-xs rounded-full font-medium ${
-                developmentTab === "construction"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600"
-              }`}
-            >
-              건설
-            </button>
-          </div>
-
-          {/* 철도 탭 내용 */}
-          {developmentTab === "rail" && (
-            <div className="space-y-2">
-              <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-                <span className="text-xs text-gray-900">용호선(트램) 부경대역</span>
-                <span className="text-xs text-gray-600">573m, 2분거리</span>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-                <span className="text-xs text-gray-900">용호선(트램) 경성대역</span>
-                <span className="text-xs text-gray-600">579m, 2분거리</span>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-                <span className="text-xs text-gray-900">용호선(트램) 대연천역</span>
-                <span className="text-xs text-gray-600">654m, 2분거리</span>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-                <span className="text-xs text-gray-900">용호선(트램) 분포역</span>
-                <span className="text-xs text-gray-600">946m, 3분거리</span>
-              </div>
-              <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-                <span className="text-xs text-gray-900">용호선(트램) 아기대역</span>
-                <span className="text-xs text-gray-600">1.3km, 4분거리</span>
-              </div>
-            </div>
-          )}
-
-          {/* 도로/건설 탭 내용 (placeholder) */}
-          {developmentTab === "road" && (
-            <div className="py-8 text-center text-xs text-gray-500">
-              도로 정보가 없습니다
-            </div>
-          )}
-          {developmentTab === "construction" && (
-            <div className="py-8 text-center text-xs text-gray-500">
-              건설 정보가 없습니다
-            </div>
-          )}
-        </div>
+        {/* 대출계산기 */}
+        <LoanCalculator
+          defaultPrice={selectedPriceInfo?.price || 0}
+          propertyName={item.propertyName}
+        />
 
         {/* 주변 입주예정 아파트 */}
         <div className="px-5 pt-6">
