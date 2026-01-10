@@ -25,7 +25,10 @@ export function ComplexListingPreview({
     return (
       <div className="px-5 pt-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-bold text-gray-900">이 단지 매물</h2>
+          <h2 className="text-sm font-bold text-gray-900">
+            이 단지 매물
+            <span className="text-xs text-orange-500 font-normal ml-2">(임의데이터) 실 데이터 등록시 적용</span>
+          </h2>
           <span className="text-xs text-gray-500">0건</span>
         </div>
         <div className="bg-gray-50 rounded-lg p-8 text-center">
@@ -44,7 +47,10 @@ export function ComplexListingPreview({
     <div className="px-5 pt-6">
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-bold text-gray-900">이 단지 매물</h2>
+        <h2 className="text-sm font-bold text-gray-900">
+            이 단지 매물
+            <span className="text-xs text-orange-500 font-normal ml-2">(임의데이터) 실 데이터 등록시 적용</span>
+          </h2>
         <span className="text-xs text-blue-600 font-medium">{listings.length}건</span>
       </div>
 

@@ -24,5 +24,17 @@
     ],
     "source": "manual",
     "updatedAt": "2025-01-10"
+  },
+  "2025000450": {
+    "floorPlans": [],
+    "gallery": [
+      "https://hf-sclass.com/img/complex_img01.jpg",
+      "https://hf-sclass.com/img/complex_txt.png",
+      "https://hf-sclass.com/img/complex_img02a.jpg",
+      "https://hf-sclass.com/img/complex_img03a.jpg",
+      "https://hf-sclass.com/img/complex_img03b.jpg"
+    ],
+    "source": "auto",
+    "updatedAt": "2026-01-10"
   }
 }

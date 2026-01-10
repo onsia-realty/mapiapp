@@ -493,10 +493,13 @@ export default function BunyanggwonDetailPage() {
 
         {/* 단지 홍보 배너 */}
         <div className="px-5 pt-4">
-          {propertyImages?.birdEyeView ? (
+          {/* birdEyeView가 없으면 갤러리 첫 번째 이미지를 조감도로 사용 */}
+          {(() => {
+            const mainImage = propertyImages?.birdEyeView || (propertyImages?.gallery?.length ? propertyImages.gallery[0] : null);
+            return mainImage ? (
             <div className="relative rounded-xl overflow-hidden mb-3 h-48">
               <Image
-                src={propertyImages.birdEyeView}
+                src={mainImage}
                 alt={`${item.propertyName} 조감도`}
                 fill
                 className="object-contain bg-gray-100"
@@ -541,7 +544,8 @@ export default function BunyanggwonDetailPage() {
                 <p className="text-sm">조감도 이미지 준비중</p>
               )}
             </div>
-          )}
+          );
+          })()}
         </div>
 
         {/* 🔥 마피 매물보기 - 가장 중요! */}
@@ -891,43 +895,6 @@ export default function BunyanggwonDetailPage() {
               )}
             </div>
           )}
-        </div>
-
-        {/* 빠른 배송 생활권 */}
-        <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">빠른 배송 생활권</h2>
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-1">
-                  <span className="text-base">🔥</span>
-                  <span className="text-xs font-bold text-gray-900">쿠팡</span>
-                </div>
-                <div className="text-xs text-gray-700">로켓배송 · 트렛프레시</div>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1">
-                  <span className="text-base">🔥</span>
-                  <span className="text-xs font-bold text-gray-900">SSG</span>
-                </div>
-                <div className="text-xs text-gray-700">쓱배송 · 새벽배송</div>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1">
-                  <span className="text-base">🌸</span>
-                  <span className="text-xs font-bold text-gray-900">마켓컬리</span>
-                </div>
-                <div className="text-xs text-gray-700">샛별배송</div>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-1">
-                  <span className="text-base">🏢</span>
-                  <span className="text-xs font-bold text-gray-900">요기요</span>
-                </div>
-                <div className="text-xs text-gray-700">익스프레스</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* 물건 위치도 정보 */}

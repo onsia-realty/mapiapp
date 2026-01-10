@@ -15,6 +15,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.co.kr",
       },
+      {
+        protocol: "https",
+        hostname: "hf-sclass.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.com",
+      },
     ],
   },
 };
