@@ -269,8 +269,8 @@ async function fetchRentData(
 
       if (response.ok) {
         const text = await response.text();
-        // 에러 응답 체크
-        if (text.includes("<resultCode>") && !text.includes("<resultCode>00</resultCode>")) {
+        // 에러 응답 체크 (000 = 성공)
+        if (text.includes("<resultCode>") && !text.includes("<resultCode>000</resultCode>")) {
           const errorCode = extractXmlValue(text, "resultCode");
           const errorMsg = extractXmlValue(text, "resultMsg");
           console.error(`❌ 전월세 API 에러: ${errorCode} - ${errorMsg}`);
