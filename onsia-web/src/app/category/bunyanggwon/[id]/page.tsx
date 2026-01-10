@@ -47,6 +47,11 @@ export default function BunyanggwonDetailPage() {
   const [rankingCategory, setRankingCategory] = useState<RankingCategory>("composite");
   const [selectedBusStop, setSelectedBusStop] = useState<NearbyBusStop | null>(null);
 
+  // 이미지 크롤링 상태
+  const [imageScraping, setImageScraping] = useState(false);
+  const [imageScrapeFailed, setImageScrapeFailed] = useState(false);
+  const [homepageUrl, setHomepageUrl] = useState<string | null>(null);
+
   // 좌표 기반 데이터 조회 (학교, 지하철, 버스)
   const fetchLocationBasedData = async (coords: { lat: number; lng: number }, address: string) => {
     try {
@@ -194,12 +199,58 @@ export default function BunyanggwonDetailPage() {
           }
 
           // 4. 분양 홈페이지 이미지 조회
+          // 홈페이지 URL 저장
+          if (bunyanggwonResult.data.homepageUrl) {
+            setHomepageUrl(bunyanggwonResult.data.homepageUrl);
+          }
+
           const imagesResponse = await fetch(`/api/property-images/${apiId}`);
           const imagesResult = await imagesResponse.json();
 
           if (imagesResult.success && imagesResult.data) {
             console.log("📷 분양 홈페이지 이미지 로드 완료");
             setPropertyImages(imagesResult.data);
+          } else if (imagesResult.needsScraping) {
+            // 저장된 이미지 없음 → 자동 크롤링 시도
+            console.log("🔍 저장된 이미지 없음, 크롤링 시도...");
+            setImageScraping(true);
+
+            try {
+              const scrapeResponse = await fetch(`/api/scrape-images/${apiId}`);
+              const scrapeResult = await scrapeResponse.json();
+
+              if (scrapeResult.success && scrapeResult.data) {
+                console.log("✅ 크롤링 성공!");
+                setPropertyImages({
+                  birdEyeView: scrapeResult.data.birdEyeView,
+                  siteLayout: scrapeResult.data.siteLayout,
+                  premium: scrapeResult.data.premium,
+                  floorPlans: scrapeResult.data.floorPlans || [],
+                  gallery: scrapeResult.data.gallery || [],
+                });
+
+                // 크롤링 결과 저장 (다음번엔 바로 로드)
+                await fetch(`/api/property-images/${apiId}`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    ...scrapeResult.data,
+                    source: "auto",
+                  }),
+                });
+              } else {
+                console.log("❌ 크롤링 실패:", scrapeResult.error);
+                setImageScrapeFailed(true);
+                if (scrapeResult.homepageUrl) {
+                  setHomepageUrl(scrapeResult.homepageUrl);
+                }
+              }
+            } catch (scrapeError) {
+              console.error("❌ 크롤링 에러:", scrapeError);
+              setImageScrapeFailed(true);
+            } finally {
+              setImageScraping(false);
+            }
           }
 
           // 5. 마피 매물 조회
@@ -438,8 +489,37 @@ export default function BunyanggwonDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-gray-200 text-gray-500 rounded-xl p-8 text-center mb-3">
-              <p className="text-sm">조감도 이미지 준비중</p>
+            <div className="bg-gray-100 text-gray-500 rounded-xl p-6 text-center mb-3">
+              {imageScraping ? (
+                <>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                  <p className="text-sm">이미지 자동 수집 중...</p>
+                </>
+              ) : imageScrapeFailed ? (
+                <>
+                  <p className="text-sm mb-3">이미지를 자동으로 찾지 못했습니다</p>
+                  <div className="flex gap-2 justify-center">
+                    {homepageUrl && (
+                      <a
+                        href={homepageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600"
+                      >
+                        분양 홈페이지
+                      </a>
+                    )}
+                    <Link
+                      href="/admin/images"
+                      className="px-4 py-2 bg-purple-500 text-white text-xs rounded-lg hover:bg-purple-600"
+                    >
+                      이미지 등록
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm">조감도 이미지 준비중</p>
+              )}
             </div>
           )}
         </div>
@@ -758,8 +838,37 @@ export default function BunyanggwonDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-gray-200 text-gray-500 rounded-xl p-12 text-center">
-              <p className="text-sm">홍보 이미지 준비중</p>
+            <div className="bg-gray-100 text-gray-500 rounded-xl p-8 text-center">
+              {imageScraping ? (
+                <>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                  <p className="text-sm">홍보 이미지 수집 중...</p>
+                </>
+              ) : imageScrapeFailed ? (
+                <>
+                  <p className="text-sm mb-3">홍보 이미지를 찾지 못했습니다</p>
+                  <div className="flex gap-2 justify-center">
+                    {homepageUrl && (
+                      <a
+                        href={homepageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600"
+                      >
+                        분양 홈페이지
+                      </a>
+                    )}
+                    <Link
+                      href="/admin/images"
+                      className="px-4 py-2 bg-purple-500 text-white text-xs rounded-lg hover:bg-purple-600"
+                    >
+                      이미지 등록
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm">홍보 이미지 준비중</p>
+              )}
             </div>
           )}
         </div>
