@@ -8,13 +8,13 @@ interface LoanCalculatorProps {
   propertyName?: string; // 단지명
 }
 
-// 주요 은행 금리 데이터 (금융감독원 기준 - 하드코딩)
+// 주요 은행 금리 데이터 (금융감독원 기준)
 const BANK_RATES = [
-  { name: "카카오뱅크", rate: 3.80, maxLoan: "10억", color: "#FFE600" },
-  { name: "수협은행", rate: 4.06, maxLoan: "7억", color: "#0066B3" },
-  { name: "케이뱅크", rate: 4.12, maxLoan: "10억", color: "#FF6B00" },
-  { name: "아이엠뱅크", rate: 4.16, maxLoan: "5억", color: "#E31937" },
-  { name: "우리은행", rate: 4.20, maxLoan: "10억", color: "#0072BC" },
+  { name: "카카오뱅크", rate: 3.80, color: "#FFE600" },
+  { name: "수협은행", rate: 4.06, color: "#0066B3" },
+  { name: "케이뱅크", rate: 4.12, color: "#FF6B00" },
+  { name: "아이엠뱅크", rate: 4.16, color: "#E31937" },
+  { name: "우리은행", rate: 4.20, color: "#0072BC" },
 ];
 
 // 대출기간 옵션
