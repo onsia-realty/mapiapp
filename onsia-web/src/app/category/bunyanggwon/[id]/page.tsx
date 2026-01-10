@@ -93,8 +93,24 @@ export default function BunyanggwonDetailPage() {
     }
   };
 
+  // 주소 정리: 괄호 제거, 지번까지만 추출
+  const cleanAddress = (address: string): string => {
+    // 괄호와 그 안의 내용 제거
+    let cleaned = address.replace(/\([^)]*\)/g, "").trim();
+    // "일원", "일대" 등 제거
+    cleaned = cleaned.replace(/\s*(일원|일대|일대일원)$/g, "").trim();
+    // "번지" 뒤의 내용 제거 (번지까지만 유지)
+    const bunjiMatch = cleaned.match(/^(.+\d+번지?)/);
+    if (bunjiMatch) {
+      cleaned = bunjiMatch[1];
+    }
+    console.log(`📍 주소 정리: "${address}" → "${cleaned}"`);
+    return cleaned;
+  };
+
   // 카카오 Geocoder로 주소 → 좌표 변환 (5초 타임아웃)
   const geocodeAddress = (address: string): Promise<{ lat: number; lng: number } | null> => {
+    const cleanedAddress = cleanAddress(address);
     return new Promise((resolve) => {
       let resolved = false;
       let checkCount = 0;
@@ -107,7 +123,7 @@ export default function BunyanggwonDetailPage() {
           if (resolved) return;
 
           const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.addressSearch(address, (result: any, status: any) => {
+          geocoder.addressSearch(cleanedAddress, (result: any, status: any) => {
             if (resolved) return;
             resolved = true;
 
@@ -116,10 +132,10 @@ export default function BunyanggwonDetailPage() {
                 lat: parseFloat(result[0].y),
                 lng: parseFloat(result[0].x)
               };
-              console.log(`📍 주소 좌표 변환 완료: ${address} → ${coords.lat}, ${coords.lng}`);
+              console.log(`📍 주소 좌표 변환 완료: ${cleanedAddress} → ${coords.lat}, ${coords.lng}`);
               resolve(coords);
             } else {
-              console.warn(`⚠️ 주소 좌표 변환 실패: ${address}`);
+              console.warn(`⚠️ 주소 좌표 변환 실패: ${cleanedAddress}`);
               resolve(null);
             }
           });
