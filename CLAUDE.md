@@ -162,6 +162,47 @@ interface BunyanggwonDetail {
 - **API**: 청약홈 공공데이터 API, 국토교통부 실거래가 API
 - **환경변수**: `.env.local`에 `DATA_GO_KR_API_KEY` 설정 필요
 
+## 공공데이터포털 API 가이드
+
+### 국토교통부 실거래가 API
+
+**엔드포인트:**
+```
+매매 상세: https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev
+전월세: https://apis.data.go.kr/1613000/RTMSDataSvcAptRent/getRTMSDataSvcAptRent
+분양권전매: https://apis.data.go.kr/1613000/RTMSDataSvcSilvTrade/getRTMSDataSvcSilvTrade
+```
+
+**⚠️ 중요 주의사항:**
+1. **API 성공 코드는 `000` (3자리)** - `00`이 아님!
+   ```typescript
+   // ❌ 잘못된 코드
+   if (!text.includes("<resultCode>00</resultCode>"))
+
+   // ✅ 올바른 코드
+   if (!text.includes("<resultCode>000</resultCode>"))
+   ```
+
+2. **응답 형식은 XML** - JSON이 아님
+   - XML 파싱 로직 필요
+   - `<item>` 태그 내부 필드 추출
+
+3. **User-Agent 헤더 필수** (일부 환경에서)
+   ```typescript
+   headers: {
+     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+   }
+   ```
+
+4. **API별 별도 신청 필요**
+   - 매매, 전월세, 분양권전매 각각 data.go.kr에서 신청
+   - 신청 후 10분~1시간 활성화 대기
+
+### 가격 표시 형식 (호갱노노 스타일)
+- **매매**: `32억 5,000` (억/만원)
+- **전세**: `4억 2,000` (보증금)
+- **월세**: `5,000/150` (보증금/월세)
+
 ## 품질 기준
 
 - ✅ 요구제기서 UI 100% 재현
