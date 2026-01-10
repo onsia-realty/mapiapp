@@ -160,13 +160,14 @@ export interface PriceByType {
  */
 export interface NearbyPriceData {
   apartmentName: string; // 아파트명
-  roadAddress: string; // 도로명주소
-  jibunAddress: string; // 지번주소
-  latitude: number; // 위도
-  longitude: number; // 경도
-  operationStatus: string; // 운영상태
-  sidoOffice: string; // 시도교육청명
-  localOffice: string; // 교육지원청명
+  address: string; // 주소 (동 + 지번)
+  roadAddress?: string; // 도로명주소
+  jibunAddress?: string; // 지번주소
+  latitude?: number; // 위도
+  longitude?: number; // 경도
+  operationStatus?: string; // 운영상태
+  sidoOffice?: string; // 시도교육청명
+  localOffice?: string; // 교육지원청명
   exclusiveArea: number; // 전용면적(㎡)
   pyeong: number; // 평수
   recentPrice: number; // 최근 거래가 (만원)

@@ -41,10 +41,17 @@ export interface Property {
   longitude: number;
   brokerName: string;
   brokerPhone: string;
+  brokerOffice?: string;
   viewCount: number;
   likeCount: number;
   isLiked: boolean;
   createdAt: string;
+  // 추가 필드
+  rooms?: number;
+  bathrooms?: number;
+  direction?: string;
+  parking?: string;
+  moveInDate?: string;
 }
 
 // 건축물대장 정보
@@ -52,14 +59,16 @@ export interface BuildingLedger {
   propertyId: string;
   buildingName: string;
   mainUse: string;
-  totalFloorArea: number;
-  buildingArea: number;
-  landArea: number;
+  totalFloorArea: number | string;
+  buildingArea: number | string;
+  landArea: number | string;
   structure: string;
   roofType: string;
   floors: string;
   height: number;
   approvalDate: string;
+  buildingCoverage?: string;
+  floorAreaRatio?: string;
 }
 
 // 카테고리 설정

@@ -38,7 +38,8 @@ const DUMMY_PROPERTIES: Record<string, Property & { buildingLedger?: BuildingLed
     description: "강남역 도보 5분 거리의 프리미엄 분양권입니다. 2025년 입주 예정이며, 남향 고층으로 조망권이 뛰어납니다. 분양가 대비 프리미엄이 적정 수준이며, 투자 가치가 높습니다.",
     exclusiveArea: 84.95,
     supplyArea: 112.5,
-    floor: "15층/25층",
+    floor: 15,
+    totalFloor: 25,
     rooms: 3,
     bathrooms: 2,
     direction: "남향",
@@ -54,6 +55,8 @@ const DUMMY_PROPERTIES: Record<string, Property & { buildingLedger?: BuildingLed
     isLiked: false,
     createdAt: "2024-01-15",
     buildingLedger: {
+      propertyId: "1",
+      buildingName: "힐스테이트 강남 센트럴",
       landArea: "1,234.56㎡",
       buildingArea: "987.65㎡",
       totalFloorArea: "12,345.67㎡",
@@ -61,6 +64,9 @@ const DUMMY_PROPERTIES: Record<string, Property & { buildingLedger?: BuildingLed
       floorAreaRatio: "299.5%",
       mainUse: "공동주택",
       structure: "철근콘크리트",
+      roofType: "평지붕",
+      floors: "지하2층/지상25층",
+      height: 85,
       approvalDate: "2023-12-15",
     },
   },
@@ -78,7 +84,8 @@ const DUMMY_PROPERTIES: Record<string, Property & { buildingLedger?: BuildingLed
     description: "반포 한강변의 대표 아파트입니다. 한강 조망이 가능하며, 지하철 역세권입니다.",
     exclusiveArea: 114.5,
     supplyArea: 145.2,
-    floor: "23층/35층",
+    floor: 23,
+    totalFloor: 35,
     rooms: 4,
     bathrooms: 2,
     direction: "남서향",
@@ -106,7 +113,8 @@ const DUMMY_PROPERTIES: Record<string, Property & { buildingLedger?: BuildingLed
     description: "이자만 납부로 투자 가능한 수익형 오피스텔입니다. 월세 수익률 연 5% 이상 기대됩니다.",
     exclusiveArea: 28.5,
     supplyArea: 35.2,
-    floor: "8층/15층",
+    floor: 8,
+    totalFloor: 15,
     rooms: 1,
     bathrooms: 1,
     direction: "동향",
@@ -290,7 +298,7 @@ export default function PropertyDetailPage() {
               <InfoItem icon={Ruler} label="공급면적" value={formatArea(property.supplyArea)} />
             )}
             {property.floor && (
-              <InfoItem icon={Building2} label="층수" value={property.floor} />
+              <InfoItem icon={Building2} label="층수" value={`${property.floor}층${property.totalFloor ? `/${property.totalFloor}층` : ''}`} />
             )}
             {property.rooms && (
               <InfoItem icon={Building2} label="방/욕실" value={`${property.rooms}/${property.bathrooms}`} />
@@ -327,11 +335,11 @@ export default function PropertyDetailPage() {
               <div className="border border-gray-200 rounded-lg overflow-hidden">
                 <table className="w-full text-sm">
                   <tbody>
-                    <LedgerRow label="대지면적" value={property.buildingLedger.landArea} />
-                    <LedgerRow label="건축면적" value={property.buildingLedger.buildingArea} />
-                    <LedgerRow label="연면적" value={property.buildingLedger.totalFloorArea} />
-                    <LedgerRow label="건폐율" value={property.buildingLedger.buildingCoverage} />
-                    <LedgerRow label="용적률" value={property.buildingLedger.floorAreaRatio} />
+                    <LedgerRow label="대지면적" value={String(property.buildingLedger.landArea)} />
+                    <LedgerRow label="건축면적" value={String(property.buildingLedger.buildingArea)} />
+                    <LedgerRow label="연면적" value={String(property.buildingLedger.totalFloorArea)} />
+                    <LedgerRow label="건폐율" value={property.buildingLedger.buildingCoverage || '-'} />
+                    <LedgerRow label="용적률" value={property.buildingLedger.floorAreaRatio || '-'} />
                     <LedgerRow label="주용도" value={property.buildingLedger.mainUse} />
                     <LedgerRow label="구조" value={property.buildingLedger.structure} />
                     <LedgerRow label="사용승인일" value={property.buildingLedger.approvalDate} isLast />
