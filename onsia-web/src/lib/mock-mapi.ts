@@ -334,7 +334,7 @@ export const mockMapiListings: MapiListing[] = [
     registrationNo: "895368",
     bunyanggwonId: "BUN003",
 
-    propertyName: "목동온프트하임",
+    propertyName: "드파인 연희",
     dong: "A",
     ho: "1201",
     type: "84A",
@@ -376,7 +376,7 @@ export const mockMapiListings: MapiListing[] = [
     },
 
     complexInfo: {
-      name: "목동온프트하임",
+      name: "드파인 연희",
       address: "서울특별시 양천구 목동",
       totalHouseholds: 890,
       totalBuildings: 5,
@@ -393,7 +393,7 @@ export const mockMapiListings: MapiListing[] = [
     registrationNo: "895369",
     bunyanggwonId: "BUN003",
 
-    propertyName: "목동온프트하임",
+    propertyName: "드파인 연희",
     dong: "B",
     ho: "2501",
     type: "84A",
@@ -435,7 +435,7 @@ export const mockMapiListings: MapiListing[] = [
     },
 
     complexInfo: {
-      name: "목동온프트하임",
+      name: "드파인 연희",
       address: "서울특별시 양천구 목동",
       totalHouseholds: 890,
       totalBuildings: 5,
@@ -454,7 +454,7 @@ export const mockMapiListings: MapiListing[] = [
     registrationNo: "895370",
     bunyanggwonId: "BUN004",
 
-    propertyName: "송도 자이 더 스타",
+    propertyName: "역삼센트럴자이",
     dong: "101",
     ho: "1001",
     type: "84C",
@@ -496,7 +496,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     },
 
     complexInfo: {
-      name: "송도 자이 더 스타",
+      name: "역삼센트럴자이",
       address: "인천광역시 연수구 송도동",
       totalHouseholds: 1560,
       totalBuildings: 12,
@@ -513,7 +513,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     registrationNo: "895371",
     bunyanggwonId: "BUN004",
 
-    propertyName: "송도 자이 더 스타",
+    propertyName: "역삼센트럴자이",
     dong: "105",
     ho: "3201",
     type: "84C",
@@ -555,7 +555,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     },
 
     complexInfo: {
-      name: "송도 자이 더 스타",
+      name: "역삼센트럴자이",
       address: "인천광역시 연수구 송도동",
       totalHouseholds: 1560,
       totalBuildings: 12,
@@ -574,7 +574,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     registrationNo: "895372",
     bunyanggwonId: "BUN005",
 
-    propertyName: "부산 에코델타 더샵",
+    propertyName: "북오산자이 리버블시티",
     dong: "201",
     ho: "501",
     type: "84D",
@@ -616,7 +616,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     },
 
     complexInfo: {
-      name: "부산 에코델타 더샵",
+      name: "북오산자이 리버블시티",
       address: "부산광역시 강서구 명지동",
       totalHouseholds: 1120,
       totalBuildings: 9,
@@ -633,7 +633,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     registrationNo: "895373",
     bunyanggwonId: "BUN005",
 
-    propertyName: "부산 에코델타 더샵",
+    propertyName: "북오산자이 리버블시티",
     dong: "203",
     ho: "1801",
     type: "84D",
@@ -675,7 +675,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     },
 
     complexInfo: {
-      name: "부산 에코델타 더샵",
+      name: "북오산자이 리버블시티",
       address: "부산광역시 강서구 명지동",
       totalHouseholds: 1120,
       totalBuildings: 9,
@@ -694,7 +694,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     registrationNo: "895374",
     bunyanggwonId: "BUN006",
 
-    propertyName: "대전 도안 롯데캐슬",
+    propertyName: "수지자이 에디시온",
     dong: "101",
     ho: "701",
     type: "59",
@@ -736,7 +736,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     },
 
     complexInfo: {
-      name: "대전 도안 롯데캐슬",
+      name: "수지자이 에디시온",
       address: "대전광역시 서구 도안동",
       totalHouseholds: 980,
       totalBuildings: 7,
@@ -753,7 +753,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     registrationNo: "895375",
     bunyanggwonId: "BUN006",
 
-    propertyName: "대전 도안 롯데캐슬",
+    propertyName: "수지자이 에디시온",
     dong: "103",
     ho: "1501",
     type: "59",
@@ -795,7 +795,7 @@ GTX-B 호재로 미래가치 상승 기대!`,
     },
 
     complexInfo: {
-      name: "대전 도안 롯데캐슬",
+      name: "수지자이 에디시온",
       address: "대전광역시 서구 도안동",
       totalHouseholds: 980,
       totalBuildings: 7,
