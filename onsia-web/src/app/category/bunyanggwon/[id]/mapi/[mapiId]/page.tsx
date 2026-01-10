@@ -432,8 +432,18 @@ export default function MapiDetailPage() {
           </div>
         </div>
 
+        {/* 단지 상세페이지 이동 */}
+        <div className="px-5 pt-6">
+          <Link
+            href={`/category/bunyanggwon/${params.id}`}
+            className="block w-full py-3 bg-pink-500 text-white text-center font-bold rounded-lg hover:bg-pink-600 transition-colors"
+          >
+            단지 상세보기
+          </Link>
+        </div>
+
         {/* 허위매물 신고 */}
-        <div className="px-5 pt-6 pb-4">
+        <div className="px-5 pt-3 pb-4">
           <button className="w-full flex items-center justify-center gap-2 py-3 text-sm text-gray-500 border border-gray-300 rounded-lg">
             <AlertTriangle className="w-4 h-4" />
             허위매물 신고

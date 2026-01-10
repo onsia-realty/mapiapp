@@ -275,7 +275,7 @@ export function LoanCalculator({ defaultPrice, propertyName }: LoanCalculatorPro
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-900">{bank.name}</p>
-                <p className="text-xs text-gray-500">최대 {bank.maxLoan}</p>
+                <p className="text-xs text-gray-500">기준금리 {bank.rate}%</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

@@ -109,7 +109,7 @@ export default function BunyanggwonPage() {
               {vipItems.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/category/bunyanggwon/${item.id}`}
+                  href={`/category/bunyanggwon/${item.id}/mapi`}
                   className="block bg-white rounded-xl border border-gray-200 p-4 active:bg-gray-50"
                 >
                   <div className="flex items-start gap-3">
@@ -179,7 +179,7 @@ export default function BunyanggwonPage() {
               {generalItems.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/category/bunyanggwon/${item.id}`}
+                  href={`/category/bunyanggwon/${item.id}/mapi`}
                   className="block bg-white rounded-xl border border-gray-200 p-4 active:bg-gray-50"
                 >
                   <div className="flex items-start gap-3">

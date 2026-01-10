@@ -952,6 +952,33 @@ export default function BunyanggwonDetailPage() {
                 <p className="text-xs text-gray-500">반경 500m 내 버스 정류장이 없습니다</p>
               </div>
             )}
+
+            {/* 버스 정류장 지도 */}
+            {selectedBusStop && coordinates && (
+              <div className="mt-3">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-2 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">🚌</span>
+                    <span className="text-xs text-green-800 font-medium">{selectedBusStop.stationName}</span>
+                  </div>
+                  <button
+                    onClick={() => setSelectedBusStop(null)}
+                    className="text-xs text-green-600 hover:text-green-800"
+                  >
+                    ✕ 닫기
+                  </button>
+                </div>
+                <div className="rounded-xl overflow-hidden">
+                  <KakaoMap
+                    latitude={selectedBusStop.latitude}
+                    longitude={selectedBusStop.longitude}
+                    markerTitle={selectedBusStop.stationName}
+                    level={3}
+                    className="w-full h-40 rounded-xl"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {nearbyBusStops.length > 0 && (
