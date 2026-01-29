@@ -31,10 +31,10 @@ export const metadata: Metadata = {
     description: "분양권 전매, 신규분양정보, 아파트 매물 정보를 한눈에! 청약홈 연동, 실거래가 조회, 주변 학군/교통 정보까지",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=630&fit=crop",
+        url: "https://onsia-web.vercel.app/mapy.png",
         width: 1200,
         height: 630,
-        alt: "온시아 부동산 플랫폼",
+        alt: "마피(MAPY) - 아파트 분양권 마이너스 피",
       },
     ],
   },
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "온시아 - 분양권 전매 & 신규분양 플랫폼",
     description: "분양권 전매, 신규분양정보, 아파트 매물 정보를 한눈에!",
-    images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=630&fit=crop"],
+    images: ["https://onsia-web.vercel.app/mapy.png"],
   },
 
   // 기타
