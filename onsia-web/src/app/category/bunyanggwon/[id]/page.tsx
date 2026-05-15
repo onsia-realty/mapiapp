@@ -9,7 +9,7 @@ import { mockBunyanggwon } from "@/lib/mock-bunyanggwon";
 import { getMapiListingsByBunyanggwonId } from "@/lib/mock-mapi";
 import { KakaoMap } from "@/components/map/KakaoMap";
 import { ChevronLeft, ChevronDown, Home } from "lucide-react";
-import { BunyanggwonData, NearbyPriceData, PropertyImages, NearbySchool, SchoolsApiResponse, NearbySubwayStation, SubwayApiResponse, NearbyBusStop, BusApiResponse } from "@/types/api";
+import { BunyanggwonData, NearbyPriceData, PropertyImages, NearbySchool, SchoolsApiResponse, NearbySubwayStation, SubwayApiResponse, NearbyBusStop, BusApiResponse, WinningCutoffData, SpecialSupplyData } from "@/types/api";
 import { UpcomingApartment } from "@/lib/api/upcoming-apartments";
 import { ApartmentRankingResult, RankingCategory } from "@/lib/api/apartment-ranking";
 import { MapiListing } from "@/types/bunyanggwon";
@@ -36,6 +36,8 @@ export default function BunyanggwonDetailPage() {
   const [nearbyBusStops, setNearbyBusStops] = useState<NearbyBusStop[]>([]);
   const [upcomingApartments, setUpcomingApartments] = useState<UpcomingApartment[]>([]);
   const [apartmentRanking, setApartmentRanking] = useState<ApartmentRankingResult | null>(null);
+  const [winningCutoff, setWinningCutoff] = useState<WinningCutoffData | null>(null);
+  const [specialSupply, setSpecialSupply] = useState<SpecialSupplyData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
@@ -217,6 +219,22 @@ export default function BunyanggwonDetailPage() {
           if (priceResult.success) {
             setNearbyPrices(priceResult.data.prices || []);
           }
+
+          // 3-1. 당첨 커트라인 + 특별공급 신청현황 (병렬)
+          const houseManageNo = bunyanggwonResult.data.id;
+          Promise.all([
+            fetch(`/api/winning-cutoff?id=${houseManageNo}`).then((r) => r.json()).catch(() => null),
+            fetch(`/api/special-supply?id=${houseManageNo}`).then((r) => r.json()).catch(() => null),
+          ]).then(([cutoffResult, specialResult]) => {
+            if (cutoffResult?.success && cutoffResult.data) {
+              console.log("🎯 당첨 커트라인 로드 완료");
+              setWinningCutoff(cutoffResult.data);
+            }
+            if (specialResult?.success && specialResult.data) {
+              console.log("🎁 특별공급 신청현황 로드 완료");
+              setSpecialSupply(specialResult.data);
+            }
+          });
 
           // 4. 분양 홈페이지 이미지 조회
           // 홈페이지 URL 저장
@@ -726,6 +744,156 @@ export default function BunyanggwonDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* 당첨 커트라인 (가점 정보) */}
+        {winningCutoff && winningCutoff.scoresByType.length > 0 && (
+          <div className="px-5 pt-6">
+            <h2 className="text-sm font-bold text-gray-900 mb-3">당첨 커트라인 (가점)</h2>
+            <div className="bg-purple-50 rounded-lg p-3 mb-3">
+              <p className="text-xs text-purple-800">
+                ✓ 청약홈 공공데이터 기반 가점제 당첨자 점수
+              </p>
+            </div>
+            {winningCutoff.summary && (
+              <div className="bg-white border border-purple-200 rounded-lg p-3 mb-3 grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <div className="text-xs text-gray-500">최저</div>
+                  <div className="text-base font-bold text-purple-700">
+                    {winningCutoff.summary.overallLowest}점
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">평균</div>
+                  <div className="text-base font-bold text-gray-700">
+                    {winningCutoff.summary.overallAverage.toFixed(1)}점
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">최고</div>
+                  <div className="text-base font-bold text-gray-700">
+                    {winningCutoff.summary.overallHighest}점
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <table className="w-full text-xs">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-2 py-2 text-left text-gray-700">주택형</th>
+                    <th className="px-2 py-2 text-left text-gray-700">지역</th>
+                    <th className="px-2 py-2 text-right text-gray-700">최저</th>
+                    <th className="px-2 py-2 text-right text-gray-700">평균</th>
+                    <th className="px-2 py-2 text-right text-gray-700">최고</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {winningCutoff.scoresByType
+                    .filter((s) => s.lowestScore > 0)
+                    .map((s, i) => (
+                      <tr key={i} className="border-t border-gray-100">
+                        <td className="px-2 py-2 text-gray-900">{s.houseType}</td>
+                        <td className="px-2 py-2 text-gray-600">{s.residenceArea}</td>
+                        <td className="px-2 py-2 text-right font-bold text-purple-700">
+                          {s.lowestScore}
+                        </td>
+                        <td className="px-2 py-2 text-right text-gray-700">
+                          {s.averageScore.toFixed(1)}
+                        </td>
+                        <td className="px-2 py-2 text-right text-gray-700">
+                          {s.highestScore}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* 특별공급 청약접수 현황 (타입별) */}
+        {specialSupply && specialSupply.byType.length > 0 && (
+          <div className="px-5 pt-6">
+            <h2 className="text-sm font-bold text-gray-900 mb-3">
+              특별공급 청약접수 현황
+            </h2>
+            <div className="bg-green-50 rounded-lg p-3 mb-3">
+              <p className="text-xs text-green-800">
+                ✓ 청약홈 공공데이터 기반 유형별 배정 세대수
+              </p>
+            </div>
+            {/* 유형별 합계 */}
+            <div className="bg-white border border-green-200 rounded-lg p-3 mb-3 grid grid-cols-3 gap-2 text-xs">
+              <div className="text-center">
+                <div className="text-gray-500">신혼부부</div>
+                <div className="font-bold text-green-700">
+                  {specialSupply.totals.newlywed}세대
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-gray-500">생애최초</div>
+                <div className="font-bold text-green-700">
+                  {specialSupply.totals.firstTime}세대
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-gray-500">다자녀</div>
+                <div className="font-bold text-green-700">
+                  {specialSupply.totals.multiChild}세대
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-gray-500">노부모부양</div>
+                <div className="font-bold text-green-700">
+                  {specialSupply.totals.oldParents}세대
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-gray-500">기관추천</div>
+                <div className="font-bold text-green-700">
+                  {specialSupply.totals.agencyRecommend}세대
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-gray-500">청년</div>
+                <div className="font-bold text-green-700">
+                  {specialSupply.totals.youth}세대
+                </div>
+              </div>
+            </div>
+            {/* 주택형별 상세 */}
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <table className="w-full text-xs">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-2 py-2 text-left text-gray-700">주택형</th>
+                    <th className="px-2 py-2 text-right text-gray-700">신혼</th>
+                    <th className="px-2 py-2 text-right text-gray-700">생애</th>
+                    <th className="px-2 py-2 text-right text-gray-700">다자녀</th>
+                    <th className="px-2 py-2 text-right text-gray-700">노부모</th>
+                    <th className="px-2 py-2 text-right text-gray-700">기관</th>
+                    <th className="px-2 py-2 text-right text-gray-700">계</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {specialSupply.byType.map((t, i) => (
+                    <tr key={i} className="border-t border-gray-100">
+                      <td className="px-2 py-2 text-gray-900">{t.houseType}</td>
+                      <td className="px-2 py-2 text-right text-gray-700">{t.newlywed}</td>
+                      <td className="px-2 py-2 text-right text-gray-700">{t.firstTime}</td>
+                      <td className="px-2 py-2 text-right text-gray-700">{t.multiChild}</td>
+                      <td className="px-2 py-2 text-right text-gray-700">{t.oldParents}</td>
+                      <td className="px-2 py-2 text-right text-gray-700">{t.agencyRecommend}</td>
+                      <td className="px-2 py-2 text-right font-bold text-green-700">
+                        {t.totalSpecialUnits}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* 주변 시세 정보 (API 연동) */}
         {nearbyPrices.length > 0 && (

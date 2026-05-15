@@ -6,6 +6,7 @@ import { MobileLayout } from "@/components/layout/MobileLayout";
 import { mockBunyanggwon } from "@/lib/mock-bunyanggwon";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import type { PropertyType } from "@/types/bunyanggwon";
+import type { KnowledgeCenterData } from "@/types/api";
 
 interface ApiListItem {
   id: string;
@@ -22,10 +23,20 @@ interface ApiListItem {
   applicationEnd: string;
 }
 
+const SIDO_BY_REGION: Record<string, string | undefined> = {
+  전국: undefined,
+  서울: "서울특별시",
+  경기도: "경기도",
+  인천: "인천광역시",
+  부산: "부산광역시",
+  대전: "대전광역시",
+};
+
 export default function BunyanggwonPage() {
   const [selectedType, setSelectedType] = useState<PropertyType>("APARTMENT");
   const [selectedRegion, setSelectedRegion] = useState("전국");
   const [apiData, setApiData] = useState<ApiListItem[]>([]);
+  const [knowledgeCenters, setKnowledgeCenters] = useState<KnowledgeCenterData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,40 +47,49 @@ export default function BunyanggwonPage() {
       setError(null);
 
       try {
-        // 지역 필터에 따른 API 호출
-        const regionParam =
-          selectedRegion === "전국"
-            ? "경기"
-            : selectedRegion === "경기도"
-              ? "경기"
-              : selectedRegion;
+        if (selectedType === "KNOWLEDGE_INDUSTRY") {
+          // 지식산업센터: CSV 시드 기반
+          const sido = SIDO_BY_REGION[selectedRegion];
+          const params = new URLSearchParams({ limit: "100" });
+          if (sido) params.append("sido", sido);
 
-        const response = await fetch(
-          `/api/bunyanggwon/list?region=${encodeURIComponent(regionParam)}&perPage=50`
-        );
+          const response = await fetch(`/api/knowledge-centers?${params}`);
+          if (!response.ok) throw new Error("지식산업센터 API 호출 실패");
 
-        if (!response.ok) {
-          throw new Error("API 호출 실패");
-        }
-
-        const result = await response.json();
-
-        if (result.success && result.data) {
-          setApiData(result.data);
-        } else {
+          const result = await response.json();
+          setKnowledgeCenters(result.success ? result.data : []);
           setApiData([]);
+        } else {
+          // 아파트/오피스텔: 청약홈 API
+          const regionParam =
+            selectedRegion === "전국"
+              ? "경기"
+              : selectedRegion === "경기도"
+                ? "경기"
+                : selectedRegion;
+
+          const response = await fetch(
+            `/api/bunyanggwon/list?region=${encodeURIComponent(regionParam)}&perPage=50`
+          );
+
+          if (!response.ok) throw new Error("API 호출 실패");
+
+          const result = await response.json();
+          setApiData(result.success && result.data ? result.data : []);
+          setKnowledgeCenters([]);
         }
       } catch (err) {
-        console.error("분양권 목록 조회 오류:", err);
+        console.error("분양 목록 조회 오류:", err);
         setError("데이터를 불러오는 중 오류가 발생했습니다");
         setApiData([]);
+        setKnowledgeCenters([]);
       } finally {
         setLoading(false);
       }
     }
 
     fetchData();
-  }, [selectedRegion]);
+  }, [selectedRegion, selectedType]);
 
   // VIP 매물 (Mock 데이터에서 - 전매 매물은 별도 관리)
   const vipItems = mockBunyanggwon.filter(
@@ -217,20 +237,94 @@ export default function BunyanggwonPage() {
           </div>
         )}
 
-        {/* 전체 분양 단지 섹션 (청약홈 API) */}
+        {/* 전체 분양 단지 섹션 (청약홈 API 또는 지식산업센터 시드) */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-bold text-gray-900">분양 중인 단지</span>
+            <span className="text-sm font-bold text-gray-900">
+              {selectedType === "KNOWLEDGE_INDUSTRY" ? "분양 가능 지식산업센터" : "분양 중인 단지"}
+            </span>
             <span className="text-xs text-gray-500">
-              {loading ? "로딩 중..." : `${filteredApiData.length}개 단지`}
+              {loading
+                ? "로딩 중..."
+                : selectedType === "KNOWLEDGE_INDUSTRY"
+                  ? `${knowledgeCenters.length}개 단지`
+                  : `${filteredApiData.length}개 단지`}
             </span>
           </div>
 
           {loading ? (
             <div className="py-12 flex flex-col items-center justify-center">
               <Loader2 className="w-8 h-8 text-purple-600 animate-spin mb-2" />
-              <p className="text-gray-500 text-sm">청약홈에서 정보를 가져오는 중...</p>
+              <p className="text-gray-500 text-sm">
+                {selectedType === "KNOWLEDGE_INDUSTRY"
+                  ? "지식산업센터 정보를 불러오는 중..."
+                  : "청약홈에서 정보를 가져오는 중..."}
+              </p>
             </div>
+          ) : selectedType === "KNOWLEDGE_INDUSTRY" ? (
+            knowledgeCenters.length === 0 ? (
+              <div className="py-12 text-center">
+                <p className="text-gray-500 text-sm">해당 지역 지식산업센터가 없습니다</p>
+              </div>
+            ) : (
+              <>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
+                  <p className="text-xs text-amber-800">
+                    📊 한국산업단지공단 공공데이터 (2025-06-30 기준) — 분양/임대 가능 단지만
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {knowledgeCenters.map((kc) => (
+                    <Link
+                      key={kc.id}
+                      href={`/category/bunyanggwon/knowledge/${kc.id}`}
+                      className="block bg-white rounded-xl border border-gray-200 p-4 active:bg-gray-50"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-20 h-20 bg-gradient-to-br from-amber-100 to-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <div className="text-center">
+                            <div className="text-amber-600 text-xs font-bold">지산</div>
+                            <div className="text-amber-400 text-[10px]">{kc.buildStatus || "-"}</div>
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-bold text-gray-900 mb-1 line-clamp-1">
+                            {kc.centerName}
+                          </h3>
+                          <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                            {kc.roadAddress || kc.jibunAddress}
+                          </p>
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            <span className="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded">
+                              {kc.saleType}
+                            </span>
+                            {kc.complexName && (
+                              <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                                {kc.complexName}
+                              </span>
+                            )}
+                            {kc.complexType && (
+                              <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                                {kc.complexType}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <div>
+                              <span className="text-gray-500">시행: </span>
+                              <span className="text-gray-700">{kc.company || "-"}</span>
+                            </div>
+                            <div className="text-gray-500">
+                              {kc.landArea > 0 && `${Math.round(kc.landArea).toLocaleString()}㎡`}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )
           ) : error ? (
             <div className="py-12 text-center">
               <p className="text-red-500 text-sm mb-2">{error}</p>

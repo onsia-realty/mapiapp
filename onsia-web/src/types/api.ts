@@ -279,3 +279,118 @@ export interface BusApiResponse {
   data: NearbyBusStop[];
   message?: string;
 }
+
+/**
+ * 당첨 가점 정보 (커트라인)
+ * 출처: ApplyhomeInfoCmpetRtSvc/getAptLttotPblancScore
+ */
+export interface WinningCutoffByType {
+  houseType: string; // 주택형 (예: 084.9622A)
+  residenceArea: "해당지역" | "기타경기" | "기타지역" | string; // 거주지역 분류
+  residenceCode: string; // 01:해당지역, 02:기타지역, 03:기타경기
+  lowestScore: number; // 최저 가점 (커트라인)
+  highestScore: number; // 최고 가점
+  averageScore: number; // 평균 가점
+}
+
+export interface WinningCutoffData {
+  houseManageNo: string; // 주택관리번호
+  pblancNo: string; // 공고번호
+  scoresByType: WinningCutoffByType[]; // 주택형 × 거주지역별 가점
+  summary?: {
+    overallLowest: number; // 전체 최저 (가장 낮은 커트라인)
+    overallHighest: number; // 전체 최고
+    overallAverage: number; // 전체 평균
+  };
+}
+
+/**
+ * 특별공급 신청현황 (유형별)
+ * 출처: ApplyhomeInfoCmpetRtSvc/getAPTSpsplyReqstStus
+ */
+export interface SpecialSupplyByType {
+  houseType: string; // 주택형
+  totalSpecialUnits: number; // 특별공급 총 세대수
+  multiChild: number; // 다자녀
+  newlywed: number; // 신혼부부
+  firstTime: number; // 생애최초
+  youth: number; // 청년
+  oldParents: number; // 노부모부양
+  agencyRecommend: number; // 기관추천
+  // 신청 결과 (있을 경우)
+  resultName?: string; // 접수 결과 명
+}
+
+export interface SpecialSupplyData {
+  houseManageNo: string;
+  pblancNo: string;
+  byType: SpecialSupplyByType[]; // 주택형별 특별공급 배정
+  totals: {
+    multiChild: number;
+    newlywed: number;
+    firstTime: number;
+    youth: number;
+    oldParents: number;
+    agencyRecommend: number;
+    totalSpecialUnits: number;
+  };
+}
+
+/**
+ * 지식산업센터 데이터 (CSV 시드)
+ * 출처: 한국산업단지공단_전국지식산업센터현황 (data.go.kr 15117154)
+ */
+export interface KnowledgeCenterData {
+  id: string; // KIC-00001 형식
+  sido: string; // 시도
+  sigungu: string; // 시군구
+  centerName: string; // 지식산업센터명
+  position: string; // 입지구분
+  company: string; // 회사명 (시행/시공)
+  registration: string; // 등록구분
+  complexName: string; // 단지명
+  jurisdiction: string; // 관할기관
+  complexType: string; // 산단구분 (국가/지방산업단지 등)
+  status: string; // 상태 (신설승인 등)
+  landUse: string; // 지목
+  landArea: number; // 용지면적(㎡)
+  buildingArea: number; // 건축면적(㎡)
+  manufactureArea: number; // 제조면적(㎡)
+  ancillaryArea: number; // 부대면적(㎡)
+  roadAddress: string; // 도로명주소
+  jibunAddress: string; // 지번주소
+  saleType: string; // 분양형태 (분양 / 분양/임대)
+  buildStatus: string; // 건축상태 (건축완료 / 건축중 / 미착공)
+  zoning1: string; // 용도지역1
+  zoning2: string; // 용도지역2
+  installer: string; // 설치자 (공공/민간)
+}
+
+export interface KnowledgeCenterListResponse {
+  success: boolean;
+  data: KnowledgeCenterData[];
+  total: number;
+  meta?: {
+    source: string;
+    sourceUrl: string;
+    referenceDate: string;
+  };
+}
+
+/**
+ * 공장등록 필지정보 (한국산업단지공단 OpenAPI)
+ * 출처: data.go.kr 15087615
+ */
+export interface FactoryLandData {
+  factoryName?: string; // 공장명
+  representative?: string; // 대표자
+  industryCode?: string; // 업종코드
+  industryName?: string; // 업종명
+  address?: string; // 공장 주소
+  jibun?: string; // 지번
+  landArea?: number; // 용지면적
+  buildingArea?: number; // 건축면적
+  registrationStatus?: string; // 등록상태
+  complexName?: string; // 단지명
+  raw?: Record<string, any>; // 원본 응답
+}
