@@ -1,0 +1,4 @@
+- [3-party project structure](project_3party_structure.md) — 온시아(사업자) ↔ 개발사(앱 외주) ↔ 고객사 구도, 용어 혼동 주의
+- [개발사 질의 응답 진행 현황](project_devco_pending_items.md) — 2026-04-30~ 진행 중인 KEY/API 응답 정리 (SNS 로그인부터 시작)
+- [마피 APK 분석](project_mapi_apk_analysis.md) — 개발사 앱은 SmartMaker 씬클라이언트, 역분석 불가·실기기 관찰로 재현
+- [마피 실기기 캡처 워크플로우](project_mapi_live_app_capture.md) — ADB 캡처 방법 + 지금까지 본 앱 화면 구조 + 테스트 계정
