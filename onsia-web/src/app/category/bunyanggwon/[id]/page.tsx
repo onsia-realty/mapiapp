@@ -8,7 +8,7 @@ import { MobileLayout } from "@/components/layout/MobileLayout";
 import { mockBunyanggwon } from "@/lib/mock-bunyanggwon";
 import { getMapiListingsByBunyanggwonId } from "@/lib/mock-mapi";
 import { KakaoMap } from "@/components/map/KakaoMap";
-import { ChevronLeft, ChevronDown, Home } from "lucide-react";
+import { ChevronLeft, ChevronDown, Home, Heart } from "lucide-react";
 import { BunyanggwonData, NearbyPriceData, PropertyImages, NearbySchool, SchoolsApiResponse, NearbySubwayStation, SubwayApiResponse, NearbyBusStop, BusApiResponse, WinningCutoffData, SpecialSupplyData } from "@/types/api";
 import { UpcomingApartment } from "@/lib/api/upcoming-apartments";
 import { ApartmentRankingResult, RankingCategory } from "@/lib/api/apartment-ranking";
@@ -408,8 +408,8 @@ export default function BunyanggwonDetailPage() {
       <MobileLayout>
         <div className="flex items-center justify-center h-screen">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">데이터를 불러오는 중...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1D6BF3] mx-auto mb-4"></div>
+            <p className="text-[#5E6C85]">데이터를 불러오는 중...</p>
           </div>
         </div>
       </MobileLayout>
@@ -422,9 +422,9 @@ export default function BunyanggwonDetailPage() {
       <MobileLayout>
         <div className="flex items-center justify-center h-screen">
           <div className="text-center">
-            <p className="text-gray-500 mb-4">매물 정보를 찾을 수 없습니다.</p>
+            <p className="text-[#8A94A8] mb-4">매물 정보를 찾을 수 없습니다.</p>
             {error && <p className="text-red-500 text-sm">{error}</p>}
-            <Link href="/category/bunyanggwon" className="text-blue-600 underline mt-4 inline-block">
+            <Link href="/category/bunyanggwon" className="text-[#1D6BF3] underline mt-4 inline-block">
               목록으로 돌아가기
             </Link>
           </div>
@@ -442,37 +442,38 @@ export default function BunyanggwonDetailPage() {
   return (
     <MobileLayout>
       {/* 헤더 */}
-      <header className="sticky top-0 z-10 bg-white shadow-sm">
+      <header className="sticky top-0 z-10 bg-[#0B1E40] rounded-b-[22px]">
         <div className="flex items-center gap-3 px-5 py-4">
-          <Link href="/category/bunyanggwon">
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
+          <Link href="/category/bunyanggwon" className="flex-none" aria-label="뒤로가기">
+            <ChevronLeft className="w-[22px] h-[22px] text-white" strokeWidth={2.2} />
           </Link>
-          <h1 className="text-base font-bold text-gray-900 line-clamp-1 flex-1">
+          <h1 className="text-[17px] font-extrabold text-white tracking-[-0.4px] whitespace-nowrap overflow-hidden text-ellipsis flex-1 min-w-0">
             {item.district} {item.propertyName}
           </h1>
+          <Heart className="w-5 h-5 text-white flex-none" strokeWidth={1.9} />
         </div>
       </header>
 
       {/* 메인 컨텐츠 */}
-      <div className="pb-20">
+      <div className="bg-[#F4F7FB] pb-20">
         {/* 평형 선택 드롭다운 */}
         <div className="px-5 pt-4">
           <div className="relative">
             <button
               onClick={() => setShowPyeongDropdown(!showPyeongDropdown)}
-              className="w-full flex items-center justify-between bg-white border border-gray-300 rounded-lg px-4 py-3"
+              className="w-full flex items-center justify-between bg-white border border-[#EDF2F8] rounded-[14px] px-4 py-3 shadow-[0_2px_10px_rgba(11,30,64,.05)]"
             >
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-[13px] font-bold text-[#1F2A3D]">
                 {selectedPyeong}평
               </span>
               <ChevronDown
-                className={`w-5 h-5 text-gray-600 transition-transform ${
+                className={`w-5 h-5 text-[#5E6C85] transition-transform ${
                   showPyeongDropdown ? "rotate-180" : ""
                 }`}
               />
             </button>
             {showPyeongDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden z-20">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-[#EDF2F8] rounded-[14px] shadow-[0_6px_20px_rgba(11,30,64,.12)] overflow-hidden z-20">
                 {availablePyeongs.map((pyeong) => (
                   <button
                     key={pyeong}
@@ -480,7 +481,7 @@ export default function BunyanggwonDetailPage() {
                       setSelectedPyeong(pyeong);
                       setShowPyeongDropdown(false);
                     }}
-                    className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 active:bg-gray-100"
+                    className="w-full px-4 py-3 text-left text-[13px] font-semibold text-[#1F2A3D] hover:bg-[#EBF2FF] active:bg-[#E5EEFF]"
                   >
                     {pyeong}평
                   </button>
@@ -492,18 +493,18 @@ export default function BunyanggwonDetailPage() {
 
         {/* 단지 기본 정보 */}
         <div className="px-5 pt-4">
-          <div className="text-sm text-gray-700">
-            <div className="mb-1">
+          <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] px-[18px] py-4">
+            <div className="text-[13px] font-semibold text-[#1F2A3D] leading-[1.5] mb-1.5">
               {item.address}
             </div>
-            <div className="flex items-center gap-1 text-gray-600">
+            <div className="flex items-center gap-1.5 text-[12px] font-medium text-[#5E6C85]">
               <span>{item.supplyInfo.totalUnits.toLocaleString()}세대</span>
-              <span>|</span>
+              <span className="text-[#D5DDE9]">|</span>
               <span>{item.moveInDate}(입주예정)</span>
             </div>
-            <div className="flex items-center gap-1 text-gray-600">
+            <div className="flex items-center gap-1.5 text-[12px] font-medium text-[#5E6C85] mt-0.5">
               <span>{item.houseType}</span>
-              <span>|</span>
+              <span className="text-[#D5DDE9]">|</span>
               <span>{item.region}</span>
             </div>
           </div>
@@ -515,25 +516,25 @@ export default function BunyanggwonDetailPage() {
           {(() => {
             const mainImage = propertyImages?.birdEyeView || (propertyImages?.gallery?.length ? propertyImages.gallery[0] : null);
             return mainImage ? (
-            <div className="relative rounded-xl overflow-hidden mb-3 h-48">
+            <div className="relative rounded-[18px] overflow-hidden mb-3 h-[210px] shadow-[0_2px_10px_rgba(11,30,64,.05)]">
               <Image
                 src={mainImage}
                 alt={`${item.propertyName} 조감도`}
                 fill
-                className="object-contain bg-gray-100"
+                className="object-contain bg-[#EDF2F8]"
                 sizes="(max-width: 768px) 100vw, 400px"
                 priority
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                <p className="text-white text-sm font-medium">{item.propertyName}</p>
+              <div className="absolute bottom-0 left-0 right-0 p-4" style={{ background: "linear-gradient(to top, rgba(11,30,64,.72), transparent)" }}>
+                <p className="text-white text-sm font-semibold">{item.propertyName}</p>
                 <p className="text-white/80 text-xs">{item.address}</p>
               </div>
             </div>
           ) : (
-            <div className="bg-gray-100 text-gray-500 rounded-xl p-6 text-center mb-3">
+            <div className="bg-white text-[#8A94A8] rounded-[18px] p-6 text-center mb-3 shadow-[0_2px_10px_rgba(11,30,64,.05)]">
               {imageScraping ? (
                 <>
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1D6BF3] mx-auto mb-2"></div>
                   <p className="text-sm">이미지 자동 수집 중...</p>
                 </>
               ) : imageScrapeFailed ? (
@@ -545,14 +546,14 @@ export default function BunyanggwonDetailPage() {
                         href={homepageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600"
+                        className="px-4 py-2 bg-[#1D6BF3] text-white text-xs rounded-lg hover:bg-[#155ed1]"
                       >
                         분양 홈페이지
                       </a>
                     )}
                     <Link
                       href="/admin/images"
-                      className="px-4 py-2 bg-purple-500 text-white text-xs rounded-lg hover:bg-purple-600"
+                      className="px-4 py-2 bg-[#1D6BF3] text-white text-xs rounded-lg hover:bg-[#155ed1]"
                     >
                       이미지 등록
                     </Link>
@@ -581,7 +582,7 @@ export default function BunyanggwonDetailPage() {
             </Link>
           ) : (
             <button
-              className="w-full bg-gray-300 text-gray-500 rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-3"
+              className="w-full bg-[#EDF2F8] text-[#8A94A8] rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-3"
               disabled
             >
               <span className="text-2xl">🏠</span>
@@ -592,16 +593,16 @@ export default function BunyanggwonDetailPage() {
 
         {/* 타입별 분양가 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">
             타입별 분양가
           </h2>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
+          <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] overflow-hidden mb-3">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50">
+              <thead className="bg-[#F0F4FA]">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium text-gray-700">타입</th>
-                  <th className="px-3 py-2 text-center font-medium text-gray-700">공급세대</th>
-                  <th className="px-3 py-2 text-right font-medium text-gray-700">분양가</th>
+                  <th className="px-3 py-2 text-left font-medium text-[#5E6C85]">타입</th>
+                  <th className="px-3 py-2 text-center font-medium text-[#5E6C85]">공급세대</th>
+                  <th className="px-3 py-2 text-right font-medium text-[#5E6C85]">분양가</th>
                 </tr>
               </thead>
               <tbody>
@@ -609,19 +610,19 @@ export default function BunyanggwonDetailPage() {
                   item.priceInfo.map((priceItem, index) => (
                     <tr
                       key={`${priceItem.type}-${index}`}
-                      className={`bg-white border-b border-gray-100 ${selectedPyeong === priceItem.type ? 'bg-purple-50' : ''}`}
+                      className={`bg-white border-b border-[#EDF2F8] ${selectedPyeong === priceItem.type ? 'bg-[#EBF2FF]' : ''}`}
                     >
-                      <td className="px-3 py-3 text-gray-900 font-medium">
+                      <td className="px-3 py-3 text-[#1F2A3D] font-medium">
                         {priceItem.type}타입
-                        <div className="text-xs text-gray-500">{priceItem.exclusiveArea.toFixed(1)}㎡</div>
+                        <div className="text-xs text-[#8A94A8]">{priceItem.exclusiveArea.toFixed(1)}㎡</div>
                       </td>
-                      <td className="px-3 py-3 text-center text-gray-700">
+                      <td className="px-3 py-3 text-center text-[#5E6C85]">
                         {priceItem.totalUnits}세대
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-[#8A94A8]">
                           (일반 {priceItem.generalUnits} / 특별 {priceItem.specialUnits})
                         </div>
                       </td>
-                      <td className="px-3 py-3 text-right text-purple-600 font-bold">
+                      <td className="px-3 py-3 text-right text-[#1D6BF3] font-extrabold">
                         {priceItem.price >= 10000
                           ? `${Math.floor(priceItem.price / 10000)}억 ${priceItem.price % 10000 > 0 ? (priceItem.price % 10000).toLocaleString() : ''}`
                           : `${priceItem.price.toLocaleString()}만`}
@@ -630,7 +631,7 @@ export default function BunyanggwonDetailPage() {
                   ))
                 ) : (
                   <tr className="bg-white">
-                    <td colSpan={3} className="px-3 py-3 text-center text-gray-500">
+                    <td colSpan={3} className="px-3 py-3 text-center text-[#8A94A8]">
                       분양가 정보가 없습니다
                     </td>
                   </tr>
@@ -647,12 +648,13 @@ export default function BunyanggwonDetailPage() {
               href={item.homepageUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-blue-500 text-white rounded-lg py-3 font-medium block text-center"
+              className="w-full text-white rounded-[14px] py-3.5 font-extrabold block text-center shadow-[0_6px_16px_rgba(29,107,243,.28)]"
+              style={{ background: "linear-gradient(135deg,#1D6BF3,#4A8CFF)" }}
             >
               분양 홈페이지 보러가기
             </a>
           ) : (
-            <button className="w-full bg-gray-300 text-gray-500 rounded-lg py-3 font-medium" disabled>
+            <button className="w-full bg-[#EDF2F8] text-[#8A94A8] rounded-lg py-3 font-medium" disabled>
               홈페이지 없음
             </button>
           )}
@@ -660,52 +662,52 @@ export default function BunyanggwonDetailPage() {
 
         {/* 분양안내 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">분양안내</h2>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">분양안내</h2>
+          <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] overflow-hidden mb-3">
             <table className="w-full text-xs">
               <tbody>
                 {item.schedule.recruitmentDate && (
-                  <tr className="border-b border-gray-200">
-                    <td className="px-3 py-3 text-gray-700 bg-gray-50 w-28">{item.schedule.recruitmentDate}</td>
-                    <td className="px-3 py-3 text-gray-900">모집공고</td>
-                    <td className="px-3 py-3 text-right text-gray-600">-</td>
+                  <tr className="border-b border-[#EDF2F8]">
+                    <td className="px-3 py-3 text-[#1D6BF3] font-extrabold bg-[#F0F4FA] w-28">{item.schedule.recruitmentDate}</td>
+                    <td className="px-3 py-3 text-[#1F2A3D]">모집공고</td>
+                    <td className="px-3 py-3 text-right text-[#5E6C85]">-</td>
                   </tr>
                 )}
                 {item.schedule.specialSupplyDate && (
-                  <tr className="border-b border-gray-200">
-                    <td className="px-3 py-3 text-gray-700 bg-gray-50 w-28">{item.schedule.specialSupplyDate}</td>
-                    <td className="px-3 py-3 text-gray-900">특별공급</td>
-                    <td className="px-3 py-3 text-right text-green-600 font-medium">청약 시작</td>
+                  <tr className="border-b border-[#EDF2F8]">
+                    <td className="px-3 py-3 text-[#8A94A8] bg-[#F0F4FA] w-28">{item.schedule.specialSupplyDate}</td>
+                    <td className="px-3 py-3 text-[#1F2A3D]">특별공급</td>
+                    <td className="px-3 py-3 text-right"><span className="bg-[#E1EDFF] text-[#1D6BF3] text-[10px] font-extrabold px-[9px] py-[3px] rounded-[6px]">청약 시작</span></td>
                   </tr>
                 )}
                 {item.schedule.subscriptionStartDate && (
-                  <tr className="border-b border-gray-200">
-                    <td className="px-3 py-3 text-gray-700 bg-gray-50 w-28">{item.schedule.subscriptionStartDate}</td>
-                    <td className="px-3 py-3 text-gray-900">1순위</td>
-                    <td className="px-3 py-3 text-right text-blue-600 font-medium">해당지역</td>
+                  <tr className="border-b border-[#EDF2F8]">
+                    <td className="px-3 py-3 text-[#8A94A8] bg-[#F0F4FA] w-28">{item.schedule.subscriptionStartDate}</td>
+                    <td className="px-3 py-3 text-[#1F2A3D]">1순위</td>
+                    <td className="px-3 py-3 text-right"><span className="bg-[#E7F6EC] text-[#16A34A] text-[10px] font-extrabold px-[9px] py-[3px] rounded-[6px]">해당지역</span></td>
                   </tr>
                 )}
                 {item.schedule.subscriptionEndDate && (
-                  <tr className="border-b border-gray-200">
-                    <td className="px-3 py-3 text-gray-700 bg-gray-50 w-28">{item.schedule.subscriptionEndDate}</td>
-                    <td className="px-3 py-3 text-gray-900">2순위</td>
-                    <td className="px-3 py-3 text-right text-gray-600">-</td>
+                  <tr className="border-b border-[#EDF2F8]">
+                    <td className="px-3 py-3 text-[#8A94A8] bg-[#F0F4FA] w-28">{item.schedule.subscriptionEndDate}</td>
+                    <td className="px-3 py-3 text-[#1F2A3D]">2순위</td>
+                    <td className="px-3 py-3 text-right text-[#5E6C85]">-</td>
                   </tr>
                 )}
                 {item.schedule.winnerAnnouncementDate && (
-                  <tr className="border-b border-gray-200">
-                    <td className="px-3 py-3 text-gray-700 bg-gray-50 w-28">{item.schedule.winnerAnnouncementDate}</td>
-                    <td className="px-3 py-3 text-gray-900">당첨자 발표</td>
-                    <td className="px-3 py-3 text-right text-gray-600">-</td>
+                  <tr className="border-b border-[#EDF2F8]">
+                    <td className="px-3 py-3 text-[#8A94A8] bg-[#F0F4FA] w-28">{item.schedule.winnerAnnouncementDate}</td>
+                    <td className="px-3 py-3 text-[#1F2A3D]">당첨자 발표</td>
+                    <td className="px-3 py-3 text-right text-[#5E6C85]">-</td>
                   </tr>
                 )}
                 {item.schedule.contractStartDate && item.schedule.contractEndDate && (
                   <tr>
-                    <td className="px-3 py-3 text-gray-700 bg-gray-50 w-28">
+                    <td className="px-3 py-3 text-[#8A94A8] bg-[#F0F4FA] w-28">
                       {item.schedule.contractStartDate}~{item.schedule.contractEndDate.slice(5)}
                     </td>
-                    <td className="px-3 py-3 text-gray-900">계약기간</td>
-                    <td className="px-3 py-3 text-right text-gray-600">-</td>
+                    <td className="px-3 py-3 text-[#1F2A3D]">계약기간</td>
+                    <td className="px-3 py-3 text-right text-[#5E6C85]">-</td>
                   </tr>
                 )}
               </tbody>
@@ -716,12 +718,13 @@ export default function BunyanggwonDetailPage() {
               href={item.announcementUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-blue-500 text-white rounded-lg py-3 font-medium block text-center"
+              className="w-full text-white rounded-[14px] py-4 font-extrabold block text-center shadow-[0_6px_16px_rgba(29,107,243,.28)]"
+              style={{ background: "linear-gradient(135deg,#1D6BF3,#4A8CFF)" }}
             >
               청약 신청하기 →
             </a>
           ) : (
-            <button className="w-full bg-gray-300 text-gray-500 rounded-lg py-3 font-medium" disabled>
+            <button className="w-full bg-[#EDF2F8] text-[#8A94A8] rounded-lg py-3 font-medium" disabled>
               청약 신청하기
             </button>
           )}
@@ -729,78 +732,72 @@ export default function BunyanggwonDetailPage() {
 
         {/* 단지 정보 박스 */}
         <div className="px-5 pt-6">
-          <div className="bg-gray-50 rounded-lg p-4 space-y-1 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-700">• {item.houseType}</span>
-              <span className="text-gray-700">• {item.supplyInfo.totalUnits}세대</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-700">• {item.schedule.recruitmentDate} 분양</span>
-              <span className="text-gray-700">• {item.moveInDate}(입주예정)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-700">• {item.region}</span>
-              <span className="text-gray-700">• {item.district}</span>
-            </div>
+          <div className="bg-[#EBF2FF] rounded-[16px] px-4 py-[14px] flex gap-1.5 flex-wrap">
+            <span className="bg-white text-[#1D6BF3] text-[11px] font-extrabold px-[11px] py-[5px] rounded-full">{item.houseType}</span>
+            <span className="bg-white text-[#1D6BF3] text-[11px] font-extrabold px-[11px] py-[5px] rounded-full">{item.supplyInfo.totalUnits}세대</span>
+            <span className="bg-white text-[#1D6BF3] text-[11px] font-extrabold px-[11px] py-[5px] rounded-full">{item.schedule.recruitmentDate} 분양</span>
+            <span className="bg-white text-[#1D6BF3] text-[11px] font-extrabold px-[11px] py-[5px] rounded-full">{item.moveInDate}(입주예정)</span>
+            <span className="bg-white text-[#5E6C85] text-[11px] font-bold px-[11px] py-[5px] rounded-full">{item.region}</span>
+            <span className="bg-white text-[#5E6C85] text-[11px] font-bold px-[11px] py-[5px] rounded-full">{item.district}</span>
           </div>
         </div>
 
         {/* 당첨 커트라인 (가점 정보) */}
         {winningCutoff && winningCutoff.scoresByType.length > 0 && (
           <div className="px-5 pt-6">
-            <h2 className="text-sm font-bold text-gray-900 mb-3">당첨 커트라인 (가점)</h2>
-            <div className="bg-purple-50 rounded-lg p-3 mb-3">
-              <p className="text-xs text-purple-800">
+            <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">당첨 커트라인 (가점)</h2>
+            <div className="bg-[#EBF2FF] rounded-[14px] p-3 mb-3">
+              <p className="text-xs text-[#1D6BF3]">
                 ✓ 청약홈 공공데이터 기반 가점제 당첨자 점수
               </p>
             </div>
             {winningCutoff.summary && (
-              <div className="bg-white border border-purple-200 rounded-lg p-3 mb-3 grid grid-cols-3 gap-2 text-center">
+              <div className="bg-white border border-[#D6E4FF] rounded-[14px] p-3 mb-3 grid grid-cols-3 gap-2 text-center">
                 <div>
-                  <div className="text-xs text-gray-500">최저</div>
-                  <div className="text-base font-bold text-purple-700">
+                  <div className="text-xs text-[#8A94A8]">최저</div>
+                  <div className="text-base font-bold text-[#1D6BF3]">
                     {winningCutoff.summary.overallLowest}점
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">평균</div>
-                  <div className="text-base font-bold text-gray-700">
+                  <div className="text-xs text-[#8A94A8]">평균</div>
+                  <div className="text-base font-bold text-[#5E6C85]">
                     {winningCutoff.summary.overallAverage.toFixed(1)}점
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">최고</div>
-                  <div className="text-base font-bold text-gray-700">
+                  <div className="text-xs text-[#8A94A8]">최고</div>
+                  <div className="text-base font-bold text-[#5E6C85]">
                     {winningCutoff.summary.overallHighest}점
                   </div>
                 </div>
               </div>
             )}
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] overflow-hidden">
               <table className="w-full text-xs">
-                <thead className="bg-gray-50">
+                <thead className="bg-[#F0F4FA]">
                   <tr>
-                    <th className="px-2 py-2 text-left text-gray-700">주택형</th>
-                    <th className="px-2 py-2 text-left text-gray-700">지역</th>
-                    <th className="px-2 py-2 text-right text-gray-700">최저</th>
-                    <th className="px-2 py-2 text-right text-gray-700">평균</th>
-                    <th className="px-2 py-2 text-right text-gray-700">최고</th>
+                    <th className="px-2 py-2 text-left text-[#5E6C85]">주택형</th>
+                    <th className="px-2 py-2 text-left text-[#5E6C85]">지역</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">최저</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">평균</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">최고</th>
                   </tr>
                 </thead>
                 <tbody>
                   {winningCutoff.scoresByType
                     .filter((s) => s.lowestScore > 0)
                     .map((s, i) => (
-                      <tr key={i} className="border-t border-gray-100">
-                        <td className="px-2 py-2 text-gray-900">{s.houseType}</td>
-                        <td className="px-2 py-2 text-gray-600">{s.residenceArea}</td>
-                        <td className="px-2 py-2 text-right font-bold text-purple-700">
+                      <tr key={i} className="border-t border-[#EDF2F8]">
+                        <td className="px-2 py-2 text-[#1F2A3D]">{s.houseType}</td>
+                        <td className="px-2 py-2 text-[#5E6C85]">{s.residenceArea}</td>
+                        <td className="px-2 py-2 text-right font-bold text-[#1D6BF3]">
                           {s.lowestScore}
                         </td>
-                        <td className="px-2 py-2 text-right text-gray-700">
+                        <td className="px-2 py-2 text-right text-[#5E6C85]">
                           {s.averageScore.toFixed(1)}
                         </td>
-                        <td className="px-2 py-2 text-right text-gray-700">
+                        <td className="px-2 py-2 text-right text-[#5E6C85]">
                           {s.highestScore}
                         </td>
                       </tr>
@@ -814,7 +811,7 @@ export default function BunyanggwonDetailPage() {
         {/* 특별공급 청약접수 현황 (타입별) */}
         {specialSupply && specialSupply.byType.length > 0 && (
           <div className="px-5 pt-6">
-            <h2 className="text-sm font-bold text-gray-900 mb-3">
+            <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">
               특별공급 청약접수 현황
             </h2>
             <div className="bg-green-50 rounded-lg p-3 mb-3">
@@ -825,65 +822,65 @@ export default function BunyanggwonDetailPage() {
             {/* 유형별 합계 */}
             <div className="bg-white border border-green-200 rounded-lg p-3 mb-3 grid grid-cols-3 gap-2 text-xs">
               <div className="text-center">
-                <div className="text-gray-500">신혼부부</div>
+                <div className="text-[#8A94A8]">신혼부부</div>
                 <div className="font-bold text-green-700">
                   {specialSupply.totals.newlywed}세대
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-gray-500">생애최초</div>
+                <div className="text-[#8A94A8]">생애최초</div>
                 <div className="font-bold text-green-700">
                   {specialSupply.totals.firstTime}세대
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-gray-500">다자녀</div>
+                <div className="text-[#8A94A8]">다자녀</div>
                 <div className="font-bold text-green-700">
                   {specialSupply.totals.multiChild}세대
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-gray-500">노부모부양</div>
+                <div className="text-[#8A94A8]">노부모부양</div>
                 <div className="font-bold text-green-700">
                   {specialSupply.totals.oldParents}세대
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-gray-500">기관추천</div>
+                <div className="text-[#8A94A8]">기관추천</div>
                 <div className="font-bold text-green-700">
                   {specialSupply.totals.agencyRecommend}세대
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-gray-500">청년</div>
+                <div className="text-[#8A94A8]">청년</div>
                 <div className="font-bold text-green-700">
                   {specialSupply.totals.youth}세대
                 </div>
               </div>
             </div>
             {/* 주택형별 상세 */}
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] overflow-hidden">
               <table className="w-full text-xs">
-                <thead className="bg-gray-50">
+                <thead className="bg-[#F0F4FA]">
                   <tr>
-                    <th className="px-2 py-2 text-left text-gray-700">주택형</th>
-                    <th className="px-2 py-2 text-right text-gray-700">신혼</th>
-                    <th className="px-2 py-2 text-right text-gray-700">생애</th>
-                    <th className="px-2 py-2 text-right text-gray-700">다자녀</th>
-                    <th className="px-2 py-2 text-right text-gray-700">노부모</th>
-                    <th className="px-2 py-2 text-right text-gray-700">기관</th>
-                    <th className="px-2 py-2 text-right text-gray-700">계</th>
+                    <th className="px-2 py-2 text-left text-[#5E6C85]">주택형</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">신혼</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">생애</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">다자녀</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">노부모</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">기관</th>
+                    <th className="px-2 py-2 text-right text-[#5E6C85]">계</th>
                   </tr>
                 </thead>
                 <tbody>
                   {specialSupply.byType.map((t, i) => (
-                    <tr key={i} className="border-t border-gray-100">
-                      <td className="px-2 py-2 text-gray-900">{t.houseType}</td>
-                      <td className="px-2 py-2 text-right text-gray-700">{t.newlywed}</td>
-                      <td className="px-2 py-2 text-right text-gray-700">{t.firstTime}</td>
-                      <td className="px-2 py-2 text-right text-gray-700">{t.multiChild}</td>
-                      <td className="px-2 py-2 text-right text-gray-700">{t.oldParents}</td>
-                      <td className="px-2 py-2 text-right text-gray-700">{t.agencyRecommend}</td>
+                    <tr key={i} className="border-t border-[#EDF2F8]">
+                      <td className="px-2 py-2 text-[#1F2A3D]">{t.houseType}</td>
+                      <td className="px-2 py-2 text-right text-[#5E6C85]">{t.newlywed}</td>
+                      <td className="px-2 py-2 text-right text-[#5E6C85]">{t.firstTime}</td>
+                      <td className="px-2 py-2 text-right text-[#5E6C85]">{t.multiChild}</td>
+                      <td className="px-2 py-2 text-right text-[#5E6C85]">{t.oldParents}</td>
+                      <td className="px-2 py-2 text-right text-[#5E6C85]">{t.agencyRecommend}</td>
                       <td className="px-2 py-2 text-right font-bold text-green-700">
                         {t.totalSpecialUnits}
                       </td>
@@ -898,26 +895,26 @@ export default function BunyanggwonDetailPage() {
         {/* 주변 시세 정보 (API 연동) */}
         {nearbyPrices.length > 0 && (
           <div className="px-5 pt-6">
-            <h2 className="text-sm font-bold text-gray-900 mb-3">주변 시세 정보 (실거래가)</h2>
-            <div className="bg-blue-50 rounded-lg p-3 mb-3">
-              <p className="text-xs text-blue-800">
+            <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">주변 시세 정보 (실거래가)</h2>
+            <div className="bg-[#EBF2FF] rounded-[14px] p-3 mb-3">
+              <p className="text-xs text-[#1D6BF3]">
                 ✓ 공공데이터 API로 가져온 실제 거래 정보입니다
               </p>
             </div>
             <div className="space-y-2">
               {nearbyPrices.slice(0, 5).map((price, index) => (
-                <div key={index} className="bg-white border border-gray-200 rounded-lg p-3">
+                <div key={index} className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-bold text-gray-900">{price.apartmentName}</span>
-                    <span className="text-xs text-gray-600">{price.pyeong}평</span>
+                    <span className="text-sm font-bold text-[#1F2A3D]">{price.apartmentName}</span>
+                    <span className="text-xs text-[#5E6C85]">{price.pyeong}평</span>
                   </div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-gray-600">{price.address}</span>
-                    <span className="text-sm font-bold text-blue-600">
+                    <span className="text-xs text-[#5E6C85]">{price.address}</span>
+                    <span className="text-sm font-bold text-[#1D6BF3]">
                       {price.recentPrice.toLocaleString()}만원
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs text-[#8A94A8]">
                     <span>{price.buildYear}년 준공 · {price.floor}층</span>
                     <span>{price.transactionDate} 거래</span>
                   </div>
@@ -929,29 +926,29 @@ export default function BunyanggwonDetailPage() {
 
         {/* 공급정보 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">공급정보</h2>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">공급정보</h2>
+          <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] overflow-hidden mb-3">
             <table className="w-full text-xs">
               <tbody>
-                <tr className="border-b border-gray-200">
-                  <td className="px-3 py-2.5 text-gray-700 bg-gray-50 font-medium">공급위치</td>
-                  <td className="px-3 py-2.5 text-gray-900">{item.supplyInfo.location}</td>
+                <tr className="border-b border-[#EDF2F8]">
+                  <td className="px-3 py-2.5 text-[#5E6C85] bg-[#F0F4FA] font-medium">공급위치</td>
+                  <td className="px-3 py-2.5 text-[#1F2A3D]">{item.supplyInfo.location}</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="px-3 py-2.5 text-gray-700 bg-gray-50 font-medium">공급규모</td>
-                  <td className="px-3 py-2.5 text-gray-900">{item.supplyInfo.totalUnits}세대</td>
+                <tr className="border-b border-[#EDF2F8]">
+                  <td className="px-3 py-2.5 text-[#5E6C85] bg-[#F0F4FA] font-medium">공급규모</td>
+                  <td className="px-3 py-2.5 text-[#1D6BF3] font-extrabold">{item.supplyInfo.totalUnits}세대</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="px-3 py-2.5 text-gray-700 bg-gray-50 font-medium">건설사</td>
-                  <td className="px-3 py-2.5 text-gray-900">{item.supplyInfo.builder}</td>
+                <tr className="border-b border-[#EDF2F8]">
+                  <td className="px-3 py-2.5 text-[#5E6C85] bg-[#F0F4FA] font-medium">건설사</td>
+                  <td className="px-3 py-2.5 text-[#1F2A3D]">{item.supplyInfo.builder}</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="px-3 py-2.5 text-gray-700 bg-gray-50 font-medium">시행사</td>
-                  <td className="px-3 py-2.5 text-gray-900">{item.supplyInfo.operator}</td>
+                <tr className="border-b border-[#EDF2F8]">
+                  <td className="px-3 py-2.5 text-[#5E6C85] bg-[#F0F4FA] font-medium">시행사</td>
+                  <td className="px-3 py-2.5 text-[#1F2A3D]">{item.supplyInfo.operator}</td>
                 </tr>
                 <tr>
-                  <td className="px-3 py-2.5 text-gray-700 bg-gray-50 font-medium">대표전화</td>
-                  <td className="px-3 py-2.5 text-blue-600 font-medium">📞 {item.supplyInfo.phone}</td>
+                  <td className="px-3 py-2.5 text-[#5E6C85] bg-[#F0F4FA] font-medium">대표전화</td>
+                  <td className="px-3 py-2.5 text-[#1D6BF3] font-medium">📞 {item.supplyInfo.phone}</td>
                 </tr>
               </tbody>
             </table>
@@ -962,12 +959,13 @@ export default function BunyanggwonDetailPage() {
                 href={item.homepageUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-blue-500 text-white rounded-lg py-3 font-medium text-sm block text-center"
+                className="w-full text-white rounded-[14px] py-3.5 font-extrabold text-sm block text-center shadow-[0_6px_16px_rgba(29,107,243,.28)]"
+                style={{ background: "linear-gradient(135deg,#1D6BF3,#4A8CFF)" }}
               >
                 🏠 분양 홈페이지 바로가기
               </a>
             ) : (
-              <button className="w-full bg-gray-300 text-gray-500 rounded-lg py-3 font-medium text-sm" disabled>
+              <button className="w-full bg-[#EDF2F8] text-[#8A94A8] rounded-lg py-3 font-medium text-sm" disabled>
                 분양 홈페이지 없음
               </button>
             )}
@@ -976,12 +974,12 @@ export default function BunyanggwonDetailPage() {
                 href={item.announcementUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-blue-500 text-white rounded-lg py-3 font-medium text-sm block text-center"
+                className="w-full bg-[#E5EEFF] text-[#1D6BF3] rounded-[14px] py-3.5 font-extrabold text-sm block text-center"
               >
                 📋 입주자 모집 공고 보기
               </a>
             ) : (
-              <button className="w-full bg-gray-300 text-gray-500 rounded-lg py-3 font-medium text-sm" disabled>
+              <button className="w-full bg-[#EDF2F8] text-[#8A94A8] rounded-lg py-3 font-medium text-sm" disabled>
                 모집 공고 없음
               </button>
             )}
@@ -990,19 +988,19 @@ export default function BunyanggwonDetailPage() {
 
         {/* 단지 홍보 이미지 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">단지 홍보 이미지</h2>
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">단지 홍보 이미지</h2>
           {propertyImages?.gallery && propertyImages.gallery.length > 0 ? (
             <div className="space-y-3">
               {/* 메인 이미지 */}
-              <div className="relative rounded-xl overflow-hidden h-56">
+              <div className="relative rounded-[18px] overflow-hidden h-56 shadow-[0_2px_10px_rgba(11,30,64,.05)]">
                 <Image
                   src={propertyImages.gallery[currentGalleryIndex]}
                   alt={`${item.propertyName} 홍보 이미지 ${currentGalleryIndex + 1}`}
                   fill
-                  className="object-contain bg-gray-100"
+                  className="object-contain bg-[#EDF2F8]"
                   sizes="(max-width: 768px) 100vw, 400px"
                 />
-                <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                <div className="absolute bottom-2 right-2 text-white text-[11px] font-bold px-[11px] py-1 rounded-full backdrop-blur-sm" style={{ background: "rgba(11,30,64,.55)" }}>
                   {currentGalleryIndex + 1} / {propertyImages.gallery.length}
                 </div>
               </div>
@@ -1012,9 +1010,9 @@ export default function BunyanggwonDetailPage() {
                   <button
                     key={index}
                     onClick={() => setCurrentGalleryIndex(index)}
-                    className={`aspect-[4/3] rounded-lg overflow-hidden border-2 transition-all relative ${
+                    className={`aspect-[4/3] rounded-[10px] overflow-hidden border-2 transition-all relative ${
                       index === currentGalleryIndex
-                        ? "border-blue-500"
+                        ? "border-[#1D6BF3]"
                         : "border-transparent opacity-60"
                     }`}
                   >
@@ -1022,7 +1020,7 @@ export default function BunyanggwonDetailPage() {
                       src={imgUrl}
                       alt={`썸네일 ${index + 1}`}
                       fill
-                      className="object-contain bg-gray-100"
+                      className="object-contain bg-[#EDF2F8]"
                       sizes="80px"
                     />
                   </button>
@@ -1030,10 +1028,10 @@ export default function BunyanggwonDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-gray-100 text-gray-500 rounded-xl p-8 text-center">
+            <div className="bg-white text-[#8A94A8] rounded-[18px] p-8 text-center shadow-[0_2px_10px_rgba(11,30,64,.05)]">
               {imageScraping ? (
                 <>
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1D6BF3] mx-auto mb-2"></div>
                   <p className="text-sm">홍보 이미지 수집 중...</p>
                 </>
               ) : imageScrapeFailed ? (
@@ -1045,14 +1043,14 @@ export default function BunyanggwonDetailPage() {
                         href={homepageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600"
+                        className="px-4 py-2 bg-[#1D6BF3] text-white text-xs rounded-lg hover:bg-[#155ed1]"
                       >
                         분양 홈페이지
                       </a>
                     )}
                     <Link
                       href="/admin/images"
-                      className="px-4 py-2 bg-purple-500 text-white text-xs rounded-lg hover:bg-purple-600"
+                      className="px-4 py-2 bg-[#1D6BF3] text-white text-xs rounded-lg hover:bg-[#155ed1]"
                     >
                       이미지 등록
                     </Link>
@@ -1067,7 +1065,7 @@ export default function BunyanggwonDetailPage() {
 
         {/* 물건 위치도 정보 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">물건 위치도 정보</h2>
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">물건 위치도 정보</h2>
           {coordinates ? (
             <>
               <div className="rounded-xl overflow-hidden mb-3">
@@ -1101,26 +1099,26 @@ export default function BunyanggwonDetailPage() {
               )}
             </>
           ) : (
-            <div className="bg-gray-200 text-gray-500 rounded-xl p-12 text-center mb-3">
+            <div className="bg-[#EDF2F8] text-[#8A94A8] rounded-xl p-12 text-center mb-3">
               <p className="text-sm">지도 정보 준비중</p>
             </div>
           )}
-          <div className="bg-white border border-gray-200 rounded-lg p-3">
-            <div className="text-sm font-medium text-gray-900 mb-1">{item.propertyName}</div>
-            <div className="text-xs text-gray-600">{item.address}</div>
+          <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3">
+            <div className="text-sm font-medium text-[#1F2A3D] mb-1">{item.propertyName}</div>
+            <div className="text-xs text-[#5E6C85]">{item.address}</div>
           </div>
         </div>
 
         {/* 주변 대중 교통 (API 연동) */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">주변 대중 교통</h2>
-          <p className="text-xs text-gray-600 mb-3">지하철 반경 2km 이내</p>
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">주변 대중 교통</h2>
+          <p className="text-xs text-[#5E6C85] mb-3">지하철 반경 2km 이내</p>
 
           {/* 지하철 */}
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-base">🚇</span>
-              <span className="text-xs font-bold text-gray-900">
+              <span className="text-xs font-bold text-[#1F2A3D]">
                 지하철 {nearbySubways.length > 0 ? nearbySubways.length : "-"}
               </span>
             </div>
@@ -1129,7 +1127,7 @@ export default function BunyanggwonDetailPage() {
                 {nearbySubways.map((station, index) => (
                   <div
                     key={`${station.stationId}-${index}`}
-                    className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between"
+                    className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
                       <span
@@ -1138,14 +1136,14 @@ export default function BunyanggwonDetailPage() {
                       >
                         {station.lineNumber}
                       </span>
-                      <span className="text-xs text-gray-900">
+                      <span className="text-xs text-[#1F2A3D]">
                         {station.stationName}
                         {station.isTransfer && (
-                          <span className="ml-1 text-[10px] text-blue-600">(환승)</span>
+                          <span className="ml-1 text-[10px] text-[#1D6BF3]">(환승)</span>
                         )}
                       </span>
                     </div>
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-[#5E6C85]">
                       {station.distance < 1
                         ? `${Math.round(station.distance * 1000)}m`
                         : `${station.distance.toFixed(1)}km`}{" "}
@@ -1155,15 +1153,15 @@ export default function BunyanggwonDetailPage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <p className="text-xs text-gray-500">반경 2km 내 지하철역이 없습니다</p>
+              <div className="bg-[#F0F4FA] rounded-[14px] p-4 text-center">
+                <p className="text-xs text-[#8A94A8]">반경 2km 내 지하철역이 없습니다</p>
               </div>
             )}
           </div>
 
           {nearbySubways.length > 0 && (
-            <div className="bg-blue-50 rounded-lg p-3">
-              <p className="text-xs text-blue-800">
+            <div className="bg-[#EBF2FF] rounded-[14px] p-3">
+              <p className="text-xs text-[#1D6BF3]">
                 ✓ 전국 도시철도역사정보 데이터 기반 (1,090개 역)
               </p>
             </div>
@@ -1171,11 +1169,11 @@ export default function BunyanggwonDetailPage() {
 
           {/* 버스 정류장 */}
           <div className="mt-4">
-            <p className="text-xs text-gray-600 mb-1">버스 정류장 반경 500m 이내</p>
+            <p className="text-xs text-[#5E6C85] mb-1">버스 정류장 반경 500m 이내</p>
             <p className="text-[10px] text-green-600 mb-3">💡 정류장을 클릭하면 지도에 위치가 표시됩니다</p>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-base">🚌</span>
-              <span className="text-xs font-bold text-gray-900">
+              <span className="text-xs font-bold text-[#1F2A3D]">
                 버스 {nearbyBusStops.length > 0 ? nearbyBusStops.length : "-"}
               </span>
             </div>
@@ -1188,7 +1186,7 @@ export default function BunyanggwonDetailPage() {
                     className={`bg-white border rounded-lg p-3 flex items-center justify-between cursor-pointer transition-all hover:shadow-md ${
                       selectedBusStop?.stationId === stop.stationId
                         ? "border-green-500 bg-green-50 ring-2 ring-green-200"
-                        : "border-gray-200 hover:border-green-300"
+                        : "border-[#EDF2F8] hover:border-green-300"
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -1197,12 +1195,12 @@ export default function BunyanggwonDetailPage() {
                       }`}>
                         B
                       </span>
-                      <span className="text-xs text-gray-900">{stop.stationName}</span>
+                      <span className="text-xs text-[#1F2A3D]">{stop.stationName}</span>
                       {selectedBusStop?.stationId === stop.stationId && (
                         <span className="text-[10px] text-green-600 font-medium">📍 지도에 표시됨</span>
                       )}
                     </div>
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-[#5E6C85]">
                       {stop.distance < 1
                         ? `${Math.round(stop.distance * 1000)}m`
                         : `${stop.distance.toFixed(1)}km`}{" "}
@@ -1212,8 +1210,8 @@ export default function BunyanggwonDetailPage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <p className="text-xs text-gray-500">반경 500m 내 버스 정류장이 없습니다</p>
+              <div className="bg-[#F0F4FA] rounded-[14px] p-4 text-center">
+                <p className="text-xs text-[#8A94A8]">반경 500m 내 버스 정류장이 없습니다</p>
               </div>
             )}
 
@@ -1256,10 +1254,10 @@ export default function BunyanggwonDetailPage() {
 
         {/* 학군 정보 (API 연동) */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">학군 정보</h2>
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">학군 정보</h2>
           {(nearbySchools.elementary.length > 0 || nearbySchools.middle.length > 0 || nearbySchools.high.length > 0) && (
-            <div className="bg-blue-50 rounded-lg p-3 mb-3">
-              <p className="text-xs text-blue-800">
+            <div className="bg-[#EBF2FF] rounded-[14px] p-3 mb-3">
+              <p className="text-xs text-[#1D6BF3]">
                 ✓ 공공데이터 API로 가져온 실제 학교 정보입니다 (반경 1.5km)
               </p>
             </div>
@@ -1271,8 +1269,8 @@ export default function BunyanggwonDetailPage() {
               onClick={() => setSchoolTab("elementary")}
               className={`px-4 py-2 text-xs rounded-full font-medium ${
                 schoolTab === "elementary"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600"
+                  ? "bg-[#1D6BF3] text-white"
+                  : "bg-[#EDF2F8] text-[#5E6C85]"
               }`}
             >
               초등학교 ({nearbySchools.elementary.length})
@@ -1281,8 +1279,8 @@ export default function BunyanggwonDetailPage() {
               onClick={() => setSchoolTab("middle")}
               className={`px-4 py-2 text-xs rounded-full font-medium ${
                 schoolTab === "middle"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600"
+                  ? "bg-[#1D6BF3] text-white"
+                  : "bg-[#EDF2F8] text-[#5E6C85]"
               }`}
             >
               중학교 ({nearbySchools.middle.length})
@@ -1291,8 +1289,8 @@ export default function BunyanggwonDetailPage() {
               onClick={() => setSchoolTab("high")}
               className={`px-4 py-2 text-xs rounded-full font-medium ${
                 schoolTab === "high"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600"
+                  ? "bg-[#1D6BF3] text-white"
+                  : "bg-[#EDF2F8] text-[#5E6C85]"
               }`}
             >
               고등학교 ({nearbySchools.high.length})
@@ -1300,7 +1298,7 @@ export default function BunyanggwonDetailPage() {
           </div>
 
           {/* 거리 범례 */}
-          <div className="bg-gray-50 rounded-lg p-3 mb-3">
+          <div className="bg-[#F0F4FA] rounded-[14px] p-3 mb-3">
             <div className="flex gap-3 text-xs">
               <span className="flex items-center gap-1">
                 <span className="w-2 h-2 bg-green-500 rounded-full"></span>
@@ -1322,24 +1320,24 @@ export default function BunyanggwonDetailPage() {
             {schoolTab === "elementary" && (
               nearbySchools.elementary.length > 0 ? (
                 nearbySchools.elementary.map((school, index) => (
-                  <div key={school.schoolId} className="bg-white border border-gray-200 rounded-lg p-3">
+                  <div key={school.schoolId} className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium text-gray-900">
+                      <span className="text-xs font-medium text-[#1F2A3D]">
                         <span className={`mr-1 ${
                           school.walkingTime <= 5 ? 'text-green-500' :
                           school.walkingTime <= 10 ? 'text-yellow-500' : 'text-orange-500'
                         }`}>●</span>
                         {school.schoolName} {school.foundationType}
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-[#5E6C85]">
                         {(school.distance * 1000).toFixed(0)}m / {school.walkingTime}분
                       </span>
                     </div>
-                    {index === 0 && <span className="text-xs text-blue-600 font-medium">가장 가까움</span>}
+                    {index === 0 && <span className="text-xs text-[#1D6BF3] font-medium">가장 가까움</span>}
                   </div>
                 ))
               ) : (
-                <div className="py-8 text-center text-xs text-gray-500">
+                <div className="py-8 text-center text-xs text-[#8A94A8]">
                   반경 1.5km 내 초등학교가 없습니다
                 </div>
               )
@@ -1348,24 +1346,24 @@ export default function BunyanggwonDetailPage() {
             {schoolTab === "middle" && (
               nearbySchools.middle.length > 0 ? (
                 nearbySchools.middle.map((school, index) => (
-                  <div key={school.schoolId} className="bg-white border border-gray-200 rounded-lg p-3">
+                  <div key={school.schoolId} className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium text-gray-900">
+                      <span className="text-xs font-medium text-[#1F2A3D]">
                         <span className={`mr-1 ${
                           school.walkingTime <= 5 ? 'text-green-500' :
                           school.walkingTime <= 10 ? 'text-yellow-500' : 'text-orange-500'
                         }`}>●</span>
                         {school.schoolName} {school.foundationType}
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-[#5E6C85]">
                         {(school.distance * 1000).toFixed(0)}m / {school.walkingTime}분
                       </span>
                     </div>
-                    {index === 0 && <span className="text-xs text-blue-600 font-medium">가장 가까움</span>}
+                    {index === 0 && <span className="text-xs text-[#1D6BF3] font-medium">가장 가까움</span>}
                   </div>
                 ))
               ) : (
-                <div className="py-8 text-center text-xs text-gray-500">
+                <div className="py-8 text-center text-xs text-[#8A94A8]">
                   반경 1.5km 내 중학교가 없습니다
                 </div>
               )
@@ -1374,24 +1372,24 @@ export default function BunyanggwonDetailPage() {
             {schoolTab === "high" && (
               nearbySchools.high.length > 0 ? (
                 nearbySchools.high.map((school, index) => (
-                  <div key={school.schoolId} className="bg-white border border-gray-200 rounded-lg p-3">
+                  <div key={school.schoolId} className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-medium text-gray-900">
+                      <span className="text-xs font-medium text-[#1F2A3D]">
                         <span className={`mr-1 ${
                           school.walkingTime <= 5 ? 'text-green-500' :
                           school.walkingTime <= 10 ? 'text-yellow-500' : 'text-orange-500'
                         }`}>●</span>
                         {school.schoolName} {school.foundationType}
                       </span>
-                      <span className="text-xs text-gray-600">
+                      <span className="text-xs text-[#5E6C85]">
                         {(school.distance * 1000).toFixed(0)}m / {school.walkingTime}분
                       </span>
                     </div>
-                    {index === 0 && <span className="text-xs text-blue-600 font-medium">가장 가까움</span>}
+                    {index === 0 && <span className="text-xs text-[#1D6BF3] font-medium">가장 가까움</span>}
                   </div>
                 ))
               ) : (
-                <div className="py-8 text-center text-xs text-gray-500">
+                <div className="py-8 text-center text-xs text-[#8A94A8]">
                   반경 1.5km 내 고등학교가 없습니다
                 </div>
               )
@@ -1413,31 +1411,31 @@ export default function BunyanggwonDetailPage() {
 
         {/* 주변 입주예정 아파트 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">주변 입주예정 아파트</h2>
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">주변 입주예정 아파트</h2>
           {upcomingApartments.length > 0 ? (
             <>
               <div className="space-y-3 mb-3">
                 {upcomingApartments.slice(0, showMoreApartments ? undefined : 1).map((apt, index) => (
-                  <div key={apt.id} className="bg-white border border-gray-200 rounded-lg p-3">
-                    <div className="text-xs text-gray-900 mb-1">{apt.district} {apt.name}</div>
-                    <div className="text-xs text-gray-600 mb-1">
+                  <div key={apt.id} className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3">
+                    <div className="text-xs text-[#1F2A3D] mb-1">{apt.district} {apt.name}</div>
+                    <div className="text-xs text-[#5E6C85] mb-1">
                       {apt.moveInDate ? apt.moveInDate.replace(".", "년 ") + "월" : ""} {apt.totalUnits.toLocaleString()}세대
                     </div>
-                    {index === 0 && <span className="text-xs text-gray-500">같은 지역</span>}
+                    {index === 0 && <span className="text-xs text-[#8A94A8]">같은 지역</span>}
                   </div>
                 ))}
               </div>
               {upcomingApartments.length > 1 && (
                 <button
                   onClick={() => setShowMoreApartments(!showMoreApartments)}
-                  className="w-full bg-blue-500 text-white rounded-lg py-3 font-medium text-sm flex items-center justify-center gap-2"
+                  className="w-full bg-[#E5EEFF] text-[#1D6BF3] rounded-[14px] py-3 font-extrabold text-sm flex items-center justify-center gap-2"
                 >
                   더보기 ({upcomingApartments.length - 1}건) {showMoreApartments ? "▲" : "▼"}
                 </button>
               )}
             </>
           ) : (
-            <div className="py-8 text-center text-xs text-gray-500">
+            <div className="py-8 text-center text-xs text-[#8A94A8]">
               같은 지역에 입주예정 아파트가 없습니다
             </div>
           )}
@@ -1445,18 +1443,18 @@ export default function BunyanggwonDetailPage() {
 
         {/* 지역 순위 */}
         <div className="px-5 pt-6">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">
+          <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">
             {apartmentRanking?.regionName || bunyanggwonData?.district || "지역"} 아파트 순위
           </h2>
 
           {/* 카테고리 탭 - 5개: 종합, 매매, 전세, 월세, 거래량 */}
-          <div className="flex gap-1 mb-3 bg-gray-100 rounded-lg p-1">
+          <div className="flex gap-1 mb-3 bg-[#EDF2F8] rounded-lg p-1">
             {[
-              { key: "composite" as RankingCategory, label: "종합", activeColor: "bg-white text-blue-600" },
-              { key: "tradePricePerPyeong" as RankingCategory, label: "매매", activeColor: "bg-white text-purple-600" },
-              { key: "jeonsePrice" as RankingCategory, label: "전세", activeColor: "bg-blue-500 text-white" },
+              { key: "composite" as RankingCategory, label: "종합", activeColor: "bg-white text-[#1D6BF3]" },
+              { key: "tradePricePerPyeong" as RankingCategory, label: "매매", activeColor: "bg-white text-[#1D6BF3]" },
+              { key: "jeonsePrice" as RankingCategory, label: "전세", activeColor: "bg-[#1D6BF3] text-white" },
               { key: "monthlyRentPrice" as RankingCategory, label: "월세", activeColor: "bg-rose-500 text-white" },
-              { key: "tradeVolume" as RankingCategory, label: "거래량", activeColor: "bg-white text-gray-900" },
+              { key: "tradeVolume" as RankingCategory, label: "거래량", activeColor: "bg-white text-[#1F2A3D]" },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -1464,7 +1462,7 @@ export default function BunyanggwonDetailPage() {
                 className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${
                   rankingCategory === tab.key
                     ? `${tab.activeColor} shadow-sm`
-                    : "text-gray-500 hover:text-gray-700"
+                    : "text-[#8A94A8] hover:text-[#5E6C85]"
                 }`}
               >
                 {tab.label}
@@ -1477,8 +1475,8 @@ export default function BunyanggwonDetailPage() {
               {/* 순위 리스트 */}
               <div className="space-y-2 mb-3">
                 {(apartmentRanking.categoryRankings[rankingCategory] || []).length === 0 ? (
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="py-4 text-center text-xs text-gray-500">
+                  <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-4">
+                    <div className="py-4 text-center text-xs text-[#8A94A8]">
                       {rankingCategory === "jeonsePrice"
                         ? "전세 거래 데이터가 없습니다"
                         : rankingCategory === "monthlyRentPrice"
@@ -1490,7 +1488,7 @@ export default function BunyanggwonDetailPage() {
                 {(apartmentRanking.categoryRankings[rankingCategory] || []).slice(0, 5).map((apt) => (
                   <div
                     key={`${apt.rank}-${apt.name}`}
-                    className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between"
+                    className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-3 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -1501,14 +1499,14 @@ export default function BunyanggwonDetailPage() {
                             ? "bg-gray-400 text-white"
                             : apt.rank === 3
                             ? "bg-orange-400 text-white"
-                            : "bg-gray-100 text-gray-600"
+                            : "bg-[#EDF2F8] text-[#5E6C85]"
                         }`}
                       >
                         {apt.rank}
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{apt.name}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-sm font-medium text-[#1F2A3D]">{apt.name}</div>
+                        <div className="text-xs text-[#8A94A8]">
                           {apt.district} · 거래 {apt.transactionCount}건
                         </div>
                       </div>
@@ -1516,34 +1514,34 @@ export default function BunyanggwonDetailPage() {
                     <div className="text-right">
                       {rankingCategory === "composite" ? (
                         <>
-                          <div className="text-sm font-bold text-blue-600">
+                          <div className="text-sm font-bold text-[#1D6BF3]">
                             {apt.compositeScore?.toFixed(1)}점
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-[#8A94A8]">
                             평당 {apt.pricePerPyeong.toLocaleString()}만
                           </div>
                         </>
                       ) : rankingCategory === "tradePricePerPyeong" ? (
                         // 매매: 매매금액 → 평당가 → 상승률
                         <>
-                          <div className="text-sm font-bold text-gray-900">
+                          <div className="text-sm font-bold text-[#1F2A3D]">
                             {apt.avgPrice >= 10000
                               ? `${(apt.avgPrice / 10000).toFixed(1)}억`
                               : `${apt.avgPrice.toLocaleString()}만`}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-[#8A94A8]">
                             평당 {apt.pricePerPyeong.toLocaleString()}만
                           </div>
                         </>
                       ) : rankingCategory === "jeonsePrice" ? (
                         // 전세: 보증금 표시
                         <>
-                          <div className="text-sm font-bold text-blue-600">
+                          <div className="text-sm font-bold text-[#1D6BF3]">
                             {apt.avgPrice >= 10000
                               ? `${(apt.avgPrice / 10000).toFixed(1)}억`
                               : `${apt.avgPrice.toLocaleString()}만`}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-[#8A94A8]">
                             보증금 · {apt.transactionCount}건
                           </div>
                         </>
@@ -1557,17 +1555,17 @@ export default function BunyanggwonDetailPage() {
                                   : apt.monthlyRentDeposit.toLocaleString() + '만'} / ${apt.monthlyRentAmount}만`
                               : "-"}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-[#8A94A8]">
                             보증금/월세 · {apt.transactionCount}건
                           </div>
                         </>
                       ) : rankingCategory === "tradeVolume" ? (
                         // 거래량
                         <>
-                          <div className="text-sm font-bold text-gray-900">
+                          <div className="text-sm font-bold text-[#1F2A3D]">
                             {apt.transactionCount}건
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-[#8A94A8]">
                             {apt.avgPrice >= 10000
                               ? `${(apt.avgPrice / 10000).toFixed(1)}억`
                               : `${apt.avgPrice.toLocaleString()}만`}
@@ -1580,8 +1578,8 @@ export default function BunyanggwonDetailPage() {
                             apt.changePercent > 0
                               ? "text-red-500"
                               : apt.changePercent < 0
-                              ? "text-blue-500"
-                              : "text-gray-400"
+                              ? "text-[#1D6BF3]"
+                              : "text-[#98A6C0]"
                           }`}
                         >
                           {apt.changePercent > 0 ? "▲" : apt.changePercent < 0 ? "▼" : "-"}{" "}
@@ -1594,7 +1592,7 @@ export default function BunyanggwonDetailPage() {
               </div>
 
               {/* 기준 정보 */}
-              <div className="text-xs text-gray-400 text-center mb-3">
+              <div className="text-xs text-[#98A6C0] text-center mb-3">
                 {apartmentRanking.period} 실거래가 기준
                 {rankingCategory === "composite" && " · 복합점수 = 거래량(40%) + 평당가(30%) + 상승률(30%)"}
                 {rankingCategory === "tradePricePerPyeong" && " · 매매 평당가 기준"}
@@ -1604,15 +1602,15 @@ export default function BunyanggwonDetailPage() {
               </div>
             </>
           ) : (
-            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-3">
-              <div className="py-4 text-center text-xs text-gray-500">
+            <div className="bg-white rounded-[18px] shadow-[0_2px_10px_rgba(11,30,64,.05)] p-4 mb-3">
+              <div className="py-4 text-center text-xs text-[#8A94A8]">
                 순위 정보를 불러오는 중...
               </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <button className="w-full bg-blue-500 text-white rounded-lg py-3 font-medium text-sm">
+            <button className="w-full bg-[#E5EEFF] text-[#1D6BF3] rounded-[14px] py-3 font-extrabold text-sm">
               {apartmentRanking?.regionName || bunyanggwonData?.district || "지역"} 아파트 순위 더보기
             </button>
           </div>
@@ -1633,7 +1631,7 @@ export default function BunyanggwonDetailPage() {
             </Link>
           ) : (
             <button
-              className="w-full bg-gray-300 text-gray-500 rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-3"
+              className="w-full bg-[#EDF2F8] text-[#8A94A8] rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-3"
               disabled
             >
               <span className="text-2xl">🏠</span>
