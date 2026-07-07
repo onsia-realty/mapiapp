@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
-import { ChevronLeft, ChevronDown, Eye, Heart } from "lucide-react";
+import { ChevronLeft, ChevronDown, Eye, Heart, Search } from "lucide-react";
 
 // 탭 타입
 type TabType = "아파트" | "오피스텔" | "상가" | "지식산업센터";
@@ -199,23 +199,27 @@ export default function IjamanPage() {
     <MobileLayout>
       {/* 헤더 */}
       <header className="sticky top-0 z-10 bg-white">
-        <div className="flex items-center gap-3 px-5 py-4">
-          <Link href="/">
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
-          </Link>
-          <h1 className="text-lg font-bold text-gray-900">이자만</h1>
+        {/* 다크 타이틀 바 */}
+        <div className="flex items-center justify-between bg-[#1B1330] px-5 py-[18px]">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center">
+              <ChevronLeft className="w-[22px] h-[22px] text-white" strokeWidth={2.2} />
+            </Link>
+            <span className="text-[19px] font-extrabold tracking-[-0.4px] text-white">이자만</span>
+          </div>
+          <Search className="w-5 h-5 text-white" strokeWidth={2} />
         </div>
 
         {/* 탭 영역 */}
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-[#ECE8F6]">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
-              className={`flex-1 py-3 text-sm font-medium text-center ${
+              className={`flex-1 py-3 text-sm text-center ${
                 selectedTab === tab
-                  ? "text-gray-900 border-b-2 border-gray-900"
-                  : "text-gray-500"
+                  ? "font-extrabold text-[#7B2FF7] border-b-2 border-[#7B2FF7]"
+                  : "font-medium text-[#9A93AC]"
               }`}
             >
               {tab}
@@ -229,10 +233,10 @@ export default function IjamanPage() {
             <button
               key={region}
               onClick={() => setSelectedRegion(region)}
-              className={`px-4 py-1.5 text-sm whitespace-nowrap rounded-full font-medium ${
+              className={`text-[12.5px] px-[15px] py-[7px] whitespace-nowrap rounded-full flex-none ${
                 selectedRegion === region
-                  ? "bg-gray-900 text-white"
-                  : "bg-gray-100 text-gray-600"
+                  ? "bg-[#1B1330] text-white font-bold"
+                  : "bg-white text-[#4B4560] font-semibold border border-[#ECE8F6]"
               }`}
             >
               {region}
@@ -241,7 +245,7 @@ export default function IjamanPage() {
         </div>
 
         {/* 상세 필터 */}
-        <div className="flex gap-2 px-5 py-2 overflow-x-auto border-b border-gray-100">
+        <div className="flex gap-2 px-5 py-2 overflow-x-auto border-b border-[#ECE8F6]">
           {/* 거래형태 */}
           <div className="relative">
             <button
@@ -249,13 +253,13 @@ export default function IjamanPage() {
                 closeAllDropdowns();
                 setShowDealTypeDropdown(!showDealTypeDropdown);
               }}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-1.5 text-[13px] font-semibold text-[#4B4560] bg-white border border-[#ECE8F6] rounded-full whitespace-nowrap"
             >
               거래형태
               <ChevronDown className="w-4 h-4" />
             </button>
             {showDealTypeDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[100px]">
+              <div className="absolute top-full left-0 mt-1 bg-white border border-[#ECE8F6] rounded-[14px] shadow-[0_8px_24px_rgba(27,19,48,.12)] z-20 min-w-[100px]">
                 {dealTypes.map((type) => (
                   <button
                     key={type}
@@ -263,8 +267,8 @@ export default function IjamanPage() {
                       setSelectedDealType(type);
                       setShowDealTypeDropdown(false);
                     }}
-                    className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-50 ${
-                      selectedDealType === type ? "text-blue-600 font-medium" : "text-gray-700"
+                    className={`block w-full px-4 py-2 text-sm text-left hover:bg-[#F1EEF8] ${
+                      selectedDealType === type ? "text-[#7B2FF7] font-bold" : "text-[#4B4560]"
                     }`}
                   >
                     {type}
@@ -281,18 +285,18 @@ export default function IjamanPage() {
                 closeAllDropdowns();
                 setShowDepositDropdown(!showDepositDropdown);
               }}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-1.5 text-[13px] font-semibold text-[#4B4560] bg-white border border-[#ECE8F6] rounded-full whitespace-nowrap"
             >
               보증금
               <ChevronDown className="w-4 h-4" />
             </button>
             {showDepositDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[120px]">
+              <div className="absolute top-full left-0 mt-1 bg-white border border-[#ECE8F6] rounded-[14px] shadow-[0_8px_24px_rgba(27,19,48,.12)] z-20 min-w-[120px]">
                 {["전체", "1천만 이하", "3천만 이하", "5천만 이하", "1억 이하", "1억 초과"].map((option) => (
                   <button
                     key={option}
                     onClick={() => setShowDepositDropdown(false)}
-                    className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                    className="block w-full px-4 py-2 text-sm text-left text-[#4B4560] hover:bg-[#F1EEF8]"
                   >
                     {option}
                   </button>
@@ -308,18 +312,18 @@ export default function IjamanPage() {
                 closeAllDropdowns();
                 setShowRentDropdown(!showRentDropdown);
               }}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-1.5 text-[13px] font-semibold text-[#4B4560] bg-white border border-[#ECE8F6] rounded-full whitespace-nowrap"
             >
               월세
               <ChevronDown className="w-4 h-4" />
             </button>
             {showRentDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[120px]">
+              <div className="absolute top-full left-0 mt-1 bg-white border border-[#ECE8F6] rounded-[14px] shadow-[0_8px_24px_rgba(27,19,48,.12)] z-20 min-w-[120px]">
                 {["전체", "50만 이하", "100만 이하", "200만 이하", "300만 이하", "300만 초과"].map((option) => (
                   <button
                     key={option}
                     onClick={() => setShowRentDropdown(false)}
-                    className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                    className="block w-full px-4 py-2 text-sm text-left text-[#4B4560] hover:bg-[#F1EEF8]"
                   >
                     {option}
                   </button>
@@ -335,18 +339,18 @@ export default function IjamanPage() {
                 closeAllDropdowns();
                 setShowAreaDropdown(!showAreaDropdown);
               }}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-1.5 text-[13px] font-semibold text-[#4B4560] bg-white border border-[#ECE8F6] rounded-full whitespace-nowrap"
             >
               면적
               <ChevronDown className="w-4 h-4" />
             </button>
             {showAreaDropdown && (
-              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[120px]">
+              <div className="absolute top-full left-0 mt-1 bg-white border border-[#ECE8F6] rounded-[14px] shadow-[0_8px_24px_rgba(27,19,48,.12)] z-20 min-w-[120px]">
                 {["전체", "10평 이하", "20평 이하", "30평 이하", "50평 이하", "50평 초과"].map((option) => (
                   <button
                     key={option}
                     onClick={() => setShowAreaDropdown(false)}
-                    className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                    className="block w-full px-4 py-2 text-sm text-left text-[#4B4560] hover:bg-[#F1EEF8]"
                   >
                     {option}
                   </button>
@@ -362,18 +366,18 @@ export default function IjamanPage() {
                 closeAllDropdowns();
                 setShowEtcDropdown(!showEtcDropdown);
               }}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md whitespace-nowrap"
+              className="flex items-center gap-1 px-3 py-1.5 text-[13px] font-semibold text-[#4B4560] bg-white border border-[#ECE8F6] rounded-full whitespace-nowrap"
             >
               기타
               <ChevronDown className="w-4 h-4" />
             </button>
             {showEtcDropdown && (
-              <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[120px]">
+              <div className="absolute top-full right-0 mt-1 bg-white border border-[#ECE8F6] rounded-[14px] shadow-[0_8px_24px_rgba(27,19,48,.12)] z-20 min-w-[120px]">
                 {["렌트프리", "권리금 없음", "1층만", "역세권"].map((option) => (
                   <button
                     key={option}
                     onClick={() => setShowEtcDropdown(false)}
-                    className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50"
+                    className="block w-full px-4 py-2 text-sm text-left text-[#4B4560] hover:bg-[#F1EEF8]"
                   >
                     {option}
                   </button>
@@ -389,7 +393,7 @@ export default function IjamanPage() {
         {filteredVipItems.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-bold text-gray-900">- VIP 매물 -</span>
+              <span className="text-[15px] font-extrabold text-[#1B1330] tracking-[-0.3px]">- VIP 매물 -</span>
             </div>
 
             <div className="space-y-4">
@@ -397,10 +401,10 @@ export default function IjamanPage() {
                 <Link
                   href={`/category/ijaman/${item.id}`}
                   key={item.id}
-                  className="block bg-white rounded-xl border border-gray-200 overflow-hidden"
+                  className="block bg-white rounded-[18px] overflow-hidden shadow-[0_2px_10px_rgba(27,19,48,.05)] active:scale-[0.99] transition-transform"
                 >
                   {/* 이미지 - 풀너비 */}
-                  <div className="relative w-full aspect-[16/9] bg-gray-200">
+                  <div className="relative w-full aspect-[16/9] bg-[#EDE9FE]">
                     <Image
                       src={item.image}
                       alt="매물 이미지"
@@ -414,46 +418,46 @@ export default function IjamanPage() {
                   <div className="p-4">
                     {/* 추천 대상 */}
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded font-medium">
+                      <span className="text-xs bg-[#D9B54A] text-[#17130B] px-2 py-0.5 rounded font-black">
                         [VIP]
                       </span>
-                      <span className="text-sm text-gray-900">
+                      <span className="text-sm text-[#1B1330]">
                         {item.targetAudience}
                       </span>
                     </div>
 
                     {/* 가격 정보 */}
                     <div className="mb-2">
-                      <span className="text-sm text-red-600 font-bold">
-                        월세 보증금/월세 (빨간색 강조)
+                      <span className="text-sm text-[#7B2FF7] font-extrabold">
+                        월세 보증금/월세 (강조)
                       </span>
                     </div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs text-orange-600">●</span>
-                      <span className="text-sm">
+                      <span className="text-sm text-[#4B4560]">
                         최초 {item.originalDeposit}만 → {item.discountedDeposit}만 ({item.discountAmount}만 인하!) ← 가격 히스토리
                       </span>
                     </div>
-                    <div className="text-sm text-gray-600 mb-1">
+                    <div className="text-sm text-[#9A93AC] mb-1">
                       또는 급전세 {(item.jeonseDeposit / 10000).toFixed(0)}억 → {((item.jeonseDeposit + (item.jeonseChange || 0)) / 10000).toFixed(0)}억 ← 전세 가격 변동
                     </div>
-                    <div className="text-sm text-gray-600 mb-1">
+                    <div className="text-sm text-[#9A93AC] mb-1">
                       평당 {item.pyeongDang}만 · 관리비 {item.maintenanceFee}만
                     </div>
-                    <div className="text-sm text-gray-600 mb-2">
+                    <div className="text-sm text-[#9A93AC] mb-2">
                       전용 {item.exclusiveArea}m²({item.pyeong}평) · {item.floor}
                     </div>
 
                     {/* 특징 */}
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-yellow-500">✨</span>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-[#9A93AC]">
                         {item.features.join(" / ")}
                       </span>
                     </div>
 
                     {/* 조회수, 좋아요 */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-4 text-xs text-[#9A93AC]">
                       <div className="flex items-center gap-1">
                         <Eye className="w-4 h-4" />
                         <span>{item.views.toLocaleString()}</span>
@@ -473,20 +477,20 @@ export default function IjamanPage() {
         {/* 전체 매물 섹션 */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-bold text-gray-900">- 전체 매물 -</span>
+            <span className="text-[15px] font-extrabold text-[#1B1330] tracking-[-0.3px]">- 전체 매물 -</span>
             <div className="relative">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowSortDropdown(!showSortDropdown);
                 }}
-                className="flex items-center gap-1 text-sm text-gray-600"
+                className="flex items-center gap-1 text-sm font-semibold text-[#9A93AC]"
               >
                 {sortType}
                 <ChevronDown className="w-4 h-4" />
               </button>
               {showSortDropdown && (
-                <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[140px]">
+                <div className="absolute top-full right-0 mt-1 bg-white border border-[#ECE8F6] rounded-[14px] shadow-[0_8px_24px_rgba(27,19,48,.12)] z-20 min-w-[140px]">
                   {sortTypes.map((type) => (
                     <button
                       key={type}
@@ -495,8 +499,8 @@ export default function IjamanPage() {
                         setSortType(type);
                         setShowSortDropdown(false);
                       }}
-                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-50 ${
-                        sortType === type ? "text-blue-600 font-medium" : "text-gray-700"
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-[#F1EEF8] ${
+                        sortType === type ? "text-[#7B2FF7] font-bold" : "text-[#4B4560]"
                       }`}
                     >
                       {type}
@@ -509,7 +513,7 @@ export default function IjamanPage() {
 
           {filteredItems.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-gray-500 text-sm">매물이 없습니다</p>
+              <p className="text-[#9A93AC] text-sm">매물이 없습니다</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -517,25 +521,25 @@ export default function IjamanPage() {
                 <Link
                   href={`/category/ijaman/${item.id}`}
                   key={item.id}
-                  className="block bg-white rounded-xl border border-gray-200 p-4"
+                  className="block bg-white rounded-[18px] p-4 shadow-[0_2px_10px_rgba(27,19,48,.05)] active:scale-[0.99] transition-transform"
                 >
                   <div className="flex gap-3">
                     {/* 텍스트 정보 */}
                     <div className="flex-1 min-w-0">
                       {/* 추천 업종 (상가/지식산업센터인 경우) */}
                       {(item.tab === "상가" || item.tab === "지식산업센터") && item.targetAudience && (
-                        <div className="text-xs text-gray-500 mb-1">
+                        <div className="text-xs text-[#9A93AC] mb-1">
                           추천 업종 ({item.targetAudience}) [VIP]
                         </div>
                       )}
 
                       {/* 매물 이름/위치 */}
-                      <div className="text-sm text-gray-900 mb-1">
+                      <div className="text-sm font-bold text-[#1B1330] mb-1">
                         {item.propertyName}
                       </div>
 
                       {/* 가격 정보 */}
-                      <div className="text-sm font-bold text-red-600 mb-1">
+                      <div className="text-sm font-extrabold text-[#7B2FF7] mb-1">
                         {item.dealType === "전세" ? (
                           `전세 ${(item.jeonseDeposit! / 10000).toFixed(1)}억`
                         ) : (
@@ -544,24 +548,24 @@ export default function IjamanPage() {
                       </div>
 
                       {/* 상세 정보 */}
-                      <div className="text-xs text-gray-600 mb-1">
+                      <div className="text-xs text-[#9A93AC] mb-1">
                         평당 {item.pyeongDang}만 · 관리금 - · 관리비 {item.maintenanceFee}만
                       </div>
-                      <div className="text-xs text-gray-600 mb-1">
+                      <div className="text-xs text-[#9A93AC] mb-1">
                         전용 {item.exclusiveArea}m²({item.pyeong}평) · {item.floor}
                       </div>
-                      <div className="text-xs text-gray-500 mb-2">
+                      <div className="text-xs text-[#9A93AC] mb-2">
                         {item.location}
                       </div>
 
                       {/* 역 거리, 등록일 */}
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600">{item.nearStation}</span>
-                        <span className="text-gray-400">{item.registeredDate}</span>
+                        <span className="text-[#6B6580]">{item.nearStation}</span>
+                        <span className="text-[#B8B0C8]">{item.registeredDate}</span>
                       </div>
 
                       {/* 조회수, 좋아요 */}
-                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 mt-2 text-xs text-[#9A93AC]">
                         <div className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
                           <span>조회 {item.views}</span>
@@ -574,7 +578,7 @@ export default function IjamanPage() {
                     </div>
 
                     {/* 이미지 */}
-                    <div className="relative w-24 h-24 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="relative w-24 h-24 bg-[#EDE9FE] rounded-[14px] overflow-hidden flex-shrink-0">
                       <Image
                         src={item.image}
                         alt={item.propertyName}
@@ -592,7 +596,7 @@ export default function IjamanPage() {
       </div>
 
       {/* 하단 네비게이션 바 */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-[#1B1330] border-t border-[#2C2145] z-50">
         <div className="max-w-screen-sm mx-auto flex justify-around py-2">
           <Link href="/" className="flex flex-col items-center py-1 px-3 text-white">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -600,23 +604,23 @@ export default function IjamanPage() {
             </svg>
             <span className="text-xs mt-1">홈</span>
           </Link>
-          <Link href="/wishlist" className="flex flex-col items-center py-1 px-3 text-gray-400">
+          <Link href="/wishlist" className="flex flex-col items-center py-1 px-3 text-[#9A8FB8]">
             <Heart className="w-6 h-6" />
             <span className="text-xs mt-1">관심 목록</span>
           </Link>
-          <Link href="/register" className="flex flex-col items-center py-1 px-3 text-gray-400">
+          <Link href="/register" className="flex flex-col items-center py-1 px-3 text-[#9A8FB8]">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
             <span className="text-xs mt-1">매물 등록</span>
           </Link>
-          <Link href="/jobs" className="flex flex-col items-center py-1 px-3 text-gray-400">
+          <Link href="/jobs" className="flex flex-col items-center py-1 px-3 text-[#9A8FB8]">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
             <span className="text-xs mt-1">구인/구직</span>
           </Link>
-          <Link href="/more" className="flex flex-col items-center py-1 px-3 text-gray-400">
+          <Link href="/more" className="flex flex-col items-center py-1 px-3 text-[#9A8FB8]">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
             </svg>
