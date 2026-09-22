@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Building2, Check, Lock, Mail, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import { DEMO_ACCOUNTS, DemoRole, findDemoAccount, saveDemoSession } from "@/lib/demo-auth";
@@ -91,6 +92,10 @@ export default function LoginPage() {
 
         <div className="mt-5 rounded-2xl border border-white/8 bg-white/[.035] px-4 py-3">
           <div className="flex items-start gap-2.5"><UserRound className="mt-0.5 h-4 w-4 shrink-0 text-[#d7ae54]" /><p className="text-[11px] leading-[1.65] text-white/48">위 계정은 화면 확인을 위한 데모 전용입니다. 역할 카드를 누르면 제공된 테스트 계정이 자동으로 입력됩니다.</p></div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <Link href="/signup" className="flex h-12 items-center justify-center rounded-2xl border border-[#d7ae54]/35 bg-[#d7ae54]/10 text-xs font-black text-[#efd587]">회원·중개사 등록</Link>
+          <Link href="/broker-guide" className="flex h-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-xs font-black text-white/65">중개사 광고 안내</Link>
         </div>
       </div>
     </main>

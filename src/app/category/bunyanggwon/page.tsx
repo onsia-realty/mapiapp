@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { mockBunyanggwon } from "@/lib/mock-bunyanggwon";
-import { ChevronLeft, Search, Loader2, SlidersHorizontal } from "lucide-react";
+import { ChevronLeft, Loader2, MapPinned, SlidersHorizontal } from "lucide-react";
 import type { PropertyType } from "@/types/bunyanggwon";
 import type { KnowledgeCenterData } from "@/types/api";
 
@@ -165,9 +165,7 @@ export default function BunyanggwonPage() {
               <span className="mt-0.5 block text-[10px] font-semibold text-[#AFA6BD]">검증된 단지와 전매 매물을 확인하세요</span>
             </div>
           </div>
-          <button aria-label="분양권 검색" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[.08]">
-            <Search className="h-5 w-5 text-white" strokeWidth={2} />
-          </button>
+          <Link href="/map?category=presale" className="flex items-center gap-1.5 rounded-full bg-white/[.08] px-3 py-2 text-[11px] font-black text-white"><MapPinned className="h-4 w-4" /> 지도</Link>
         </div>
 
         {/* 타입 필터 (카테고리 필 탭) */}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
-import { ChevronLeft, ChevronDown, Eye, Heart, Search } from "lucide-react";
+import { ChevronLeft, ChevronDown, Eye, Heart, MapPinned } from "lucide-react";
 
 // 탭 타입
 type TabType = "아파트" | "오피스텔" | "상가" | "지식산업센터";
@@ -207,7 +207,7 @@ export default function IjamanPage() {
             </Link>
             <span className="text-[19px] font-extrabold tracking-[-0.4px] text-white">이자만</span>
           </div>
-          <Search className="w-5 h-5 text-white" strokeWidth={2} />
+          <Link href="/map?category=interestOnly" className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-[11px] font-black text-white"><MapPinned className="h-4 w-4" /> 지도</Link>
         </div>
 
         {/* 탭 영역 */}

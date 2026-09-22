@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
-import { ChevronLeft, Search } from "lucide-react";
+import { ChevronLeft, MapPinned } from "lucide-react";
 
 const mockOfficetel = [
   {
@@ -52,7 +52,7 @@ export default function OfficetelPage() {
               오피스텔
             </span>
           </div>
-          <Search className="w-5 h-5 text-white" strokeWidth={2} />
+          <Link href="/map?category=officetel" className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-[11px] font-black text-white"><MapPinned className="h-4 w-4" /> 지도</Link>
         </div>
 
         {/* 거래유형 필터 (카테고리 필 탭) */}

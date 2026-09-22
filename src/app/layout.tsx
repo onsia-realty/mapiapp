@@ -65,6 +65,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const kakaoMapKey = process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY;
+  const shouldLoadKakaoMap = Boolean(
+    kakaoMapKey && !kakaoMapKey.toLowerCase().includes("your_") && kakaoMapKey !== "undefined",
+  );
+
   return (
     <html lang="ko">
       <head>
@@ -72,10 +77,12 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
-        <Script
-          src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false&libraries=services`}
-          strategy="beforeInteractive"
-        />
+        {shouldLoadKakaoMap && (
+          <Script
+            src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}&autoload=false&libraries=services`}
+            strategy="beforeInteractive"
+          />
+        )}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

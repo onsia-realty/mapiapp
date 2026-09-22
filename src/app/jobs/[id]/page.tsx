@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { KakaoMap } from "@/components/map/KakaoMap";
 import {
   ChevronLeft,
   ChevronRight,
@@ -197,9 +198,8 @@ export default function JobDetailPage() {
 
         {/* 위치 */}
         <Section title="위치">
-          <div className="w-full h-48 rounded-xl bg-[#F3F0FA] flex items-center justify-center text-[#A49BBE] text-[13px]">
-            지도 영역 ({JOB_DETAIL.address})
-          </div>
+          <KakaoMap latitude={37.5686} longitude={126.8972} markerTitle={JOB_DETAIL.company} className="h-48 w-full rounded-xl" />
+          <div className="mt-3 flex items-start gap-2 text-[12px] font-bold text-[#655d6e]"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[var(--brand-purple)]" />{JOB_DETAIL.address}</div>
           <p className="text-[11px] text-[#C9C2DC] mt-3">
             본 채용공고의 저작권은 {JOB_DETAIL.company}에 있으며, 무단 전재 및 재배포를 금지합니다.
           </p>

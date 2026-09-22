@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, BriefcaseBusiness, Building2, ChevronRight, CircleHelp, Crown, FileText, Heart, HousePlus, LogIn, LogOut, MessageSquareText, Receipt, Settings, ShieldCheck, User } from "lucide-react";
+import { BadgeCheck, Bell, BriefcaseBusiness, Building2, ChevronRight, CircleHelp, Crown, FileText, Heart, HousePlus, LogIn, LogOut, MessageSquareText, Receipt, Settings, ShieldCheck, User } from "lucide-react";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { clearDemoSession, useDemoSession } from "@/lib/demo-auth";
 
@@ -82,6 +82,7 @@ export default function MorePage() {
         <section>
           <p className="mb-2 px-1 text-[11px] font-black tracking-wide text-[#918897]">구독 · 결제</p>
           <div className="overflow-hidden rounded-[20px] border border-[#ebe7ef] bg-white">
+            <MenuRow item={{ href: "/broker-guide", label: "중개사 가입 · 광고 안내", icon: BadgeCheck, badge: "NEW" }} />
             <MenuRow item={{ href: "/billing/plans", label: "요금제 및 광고 상품", icon: Crown, badge: "PROMO" }} />
             <MenuRow item={{ href: "/mypage/subscription", label: "이용 상품 관리", icon: Receipt }} />
           </div>
