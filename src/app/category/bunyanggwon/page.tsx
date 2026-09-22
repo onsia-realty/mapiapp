@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MobileLayout } from "@/components/layout/MobileLayout";
@@ -27,11 +27,33 @@ interface ApiListItem {
 const SIDO_BY_REGION: Record<string, string | undefined> = {
   전국: undefined,
   서울: "서울특별시",
-  경기도: "경기도",
+  경기남부: "경기도",
+  경기북부: "경기도",
   인천: "인천광역시",
   부산: "부산광역시",
   대전: "대전광역시",
 };
+
+const REGIONS = ["전국", "서울", "경기남부", "경기북부", "인천", "부산", "대전"];
+const SOUTH_GYEONGGI = ["수원", "용인", "성남", "화성", "평택", "오산", "안양", "군포", "의왕", "과천", "안산", "시흥", "광주", "이천", "여주", "하남"];
+const NORTH_GYEONGGI = ["고양", "파주", "의정부", "양주", "구리", "남양주", "포천", "동두천", "연천", "가평", "김포"];
+
+function matchesRegion(item: Pick<ApiListItem, "region" | "district" | "address">, selectedRegion: string) {
+  if (selectedRegion === "전국") return true;
+  if (selectedRegion === "서울") return item.region === "서울";
+  if (selectedRegion === "인천" || selectedRegion === "부산" || selectedRegion === "대전") {
+    return item.region === selectedRegion;
+  }
+
+  const location = `${item.district} ${item.address}`;
+  if (selectedRegion === "경기남부") {
+    return item.region === "경기" && SOUTH_GYEONGGI.some((city) => location.includes(city));
+  }
+  if (selectedRegion === "경기북부") {
+    return item.region === "경기" && NORTH_GYEONGGI.some((city) => location.includes(city));
+  }
+  return false;
+}
 
 // 청약기간 표시 (MM.DD ~ MM.DD, 없으면 "청약 예정")
 function formatApplicationPeriod(start: string, end: string): string {
@@ -61,6 +83,14 @@ export default function BunyanggwonPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usingDemoData, setUsingDemoData] = useState(false);
+  const regionScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const requestedRegion = new URLSearchParams(window.location.search).get("region");
+    if (requestedRegion && REGIONS.includes(requestedRegion)) {
+      setSelectedRegion(requestedRegion);
+    }
+  }, []);
 
   // API에서 데이터 가져오기
   useEffect(() => {
@@ -85,24 +115,23 @@ export default function BunyanggwonPage() {
         } else {
           // 아파트/오피스텔: 청약홈 API
           const regionParam =
-            selectedRegion === "전국"
+            selectedRegion === "경기남부" || selectedRegion === "경기북부"
               ? "경기"
-              : selectedRegion === "경기도"
-                ? "경기"
-                : selectedRegion;
+              : selectedRegion;
 
           const response = await fetch(
-            `/api/bunyanggwon/list?region=${encodeURIComponent(regionParam)}&perPage=50`
+            `/api/bunyanggwon/list?region=${encodeURIComponent(regionParam)}&type=${selectedType}&perPage=50`
           );
 
-          if (!response.ok) throw new Error("API 호출 실패");
+          if (!response.ok) throw new Error(`목록 API 응답 오류 (${response.status})`);
 
           const result = await response.json();
           setApiData(result.success && result.data ? result.data : []);
           setKnowledgeCenters([]);
+          setUsingDemoData(result.source === "demo");
         }
       } catch (err) {
-        console.error("분양 목록 조회 오류:", err);
+        console.warn("분양 목록 조회 fallback:", err);
         if (selectedType !== "KNOWLEDGE_INDUSTRY") {
           const fallbackData: ApiListItem[] = mockBunyanggwon
             .filter((item) => item.type === selectedType && item.salesStatus !== "VIP")
@@ -137,20 +166,16 @@ export default function BunyanggwonPage() {
   }, [selectedRegion, selectedType]);
 
   // VIP 매물 (Mock 데이터에서 - 전매 매물은 별도 관리)
-  const vipItems = mockBunyanggwon.filter(
-    (item) => item.salesStatus === "VIP" && item.type === selectedType
-  );
+  const vipItems = mockBunyanggwon
+    .filter((item) => item.salesStatus === "VIP" && item.type === selectedType)
+    .filter((item) => matchesRegion({
+      region: item.region.replace("특별시", "").replace("광역시", "").replace("도", ""),
+      district: item.district || "",
+      address: item.address,
+    }, selectedRegion));
 
   // API 데이터 지역별 필터링
-  const filteredApiData = apiData.filter((item) => {
-    if (selectedRegion === "전국") return true;
-    if (selectedRegion === "서울") return item.region === "서울";
-    if (selectedRegion === "경기도") return item.region === "경기";
-    if (selectedRegion === "인천") return item.region === "인천";
-    return item.region === selectedRegion;
-  });
-
-  const regions = ["전국", "서울", "경기도", "인천", "부산", "대전"];
+  const filteredApiData = apiData.filter((item) => matchesRegion(item, selectedRegion));
 
   return (
     <MobileLayout>
@@ -189,17 +214,29 @@ export default function BunyanggwonPage() {
         </div>
       </header>
 
-      <div className="hide-scrollbar sticky top-0 z-20 flex gap-2 overflow-x-auto border-b border-[var(--line)] bg-[var(--surface-muted)]/95 px-5 py-[14px] backdrop-blur-xl">
+      <div
+        ref={regionScrollRef}
+        onWheel={(event) => {
+          if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+            event.currentTarget.scrollLeft += event.deltaY;
+          }
+        }}
+        className="hide-scrollbar sticky top-0 z-20 flex touch-pan-x snap-x gap-2 overflow-x-auto overscroll-x-contain border-b border-[var(--line)] bg-[var(--surface-muted)]/95 px-5 py-[14px] backdrop-blur-xl"
+        aria-label="지역 필터"
+      >
         <span className="flex h-[33px] w-[33px] flex-none items-center justify-center rounded-full border border-[var(--line)] bg-white text-[var(--text-muted)]">
           <SlidersHorizontal className="h-4 w-4" />
         </span>
-        {regions.map((region) => {
+        {REGIONS.map((region) => {
           const active = selectedRegion === region;
           return (
             <button
               key={region}
-              onClick={() => setSelectedRegion(region)}
-              className={`text-[12.5px] px-[15px] py-[7px] rounded-full whitespace-nowrap flex-none ${
+              onClick={(event) => {
+                setSelectedRegion(region);
+                event.currentTarget.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+              }}
+              className={`snap-center text-[12.5px] px-[15px] py-[7px] rounded-full whitespace-nowrap flex-none ${
                 active
                   ? "bg-[var(--brand-ink)] text-white font-bold"
                   : "border border-[var(--line)] bg-white text-[var(--text-muted)] font-semibold"

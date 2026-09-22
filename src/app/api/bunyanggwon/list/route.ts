@@ -4,6 +4,8 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { mockBunyanggwon } from "@/lib/mock-bunyanggwon";
+import type { PropertyType } from "@/types/bunyanggwon";
 
 interface CheongakItem {
   HOUSE_MANAGE_NO: string;
@@ -36,11 +38,54 @@ interface BunyanggwonListItem {
 
 // 환경변수에서 API 키 가져오기
 function getApiKey(): string {
-  const apiKey = process.env.DATA_GO_KR_API_KEY;
-  if (!apiKey) {
-    throw new Error("DATA_GO_KR_API_KEY 환경변수가 설정되지 않았습니다");
-  }
-  return apiKey;
+  return process.env.DATA_GO_KR_API_KEY || "";
+}
+
+function getDemoItems(region: string, propertyType: PropertyType): BunyanggwonListItem[] {
+  const apiRegion = region === "경기남부" || region === "경기북부" ? "경기" : region;
+
+  return mockBunyanggwon
+    .filter((item) => item.type === propertyType && item.salesStatus !== "VIP")
+    .filter((item) => {
+      if (!apiRegion || apiRegion === "전국") return true;
+      const itemRegion = item.region
+        .replace("특별시", "")
+        .replace("광역시", "")
+        .replace("도", "");
+      return itemRegion === apiRegion;
+    })
+    .map((item) => {
+      const unitsLabel = item.features?.find((feature) => feature.includes("세대"));
+      const totalUnits = Number(unitsLabel?.replace(/\D/g, "")) || 0;
+
+      return {
+        id: item.id,
+        apiId: item.apiId || item.id,
+        propertyName: item.propertyName,
+        address: item.address,
+        region: item.region.replace("특별시", "").replace("광역시", "").replace("도", ""),
+        district: item.district || "",
+        totalUnits,
+        moveInDate: item.moveInDate || "미정",
+        builder: item.features?.[0] || "",
+        homepageUrl: "",
+        applicationStart: "",
+        applicationEnd: "",
+      };
+    });
+}
+
+function demoResponse(region: string, propertyType: PropertyType, message: string) {
+  const items = getDemoItems(region, propertyType);
+  return NextResponse.json({
+    success: true,
+    data: items,
+    totalCount: items.length,
+    page: 1,
+    perPage: items.length,
+    source: "demo",
+    message,
+  });
 }
 
 // 주소에서 구/시 추출
@@ -122,11 +167,20 @@ function isValidProperty(item: CheongakItem): boolean {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const region = searchParams.get("region") || "경기"; // 기본: 경기
+    const region = searchParams.get("region") || "전국";
+    const propertyType = (searchParams.get("type") || "APARTMENT") as PropertyType;
     const page = parseInt(searchParams.get("page") || "1", 10);
     const perPage = parseInt(searchParams.get("perPage") || "20", 10);
 
     const apiKey = getApiKey();
+
+    if (propertyType === "OFFICETEL") {
+      return demoResponse(region, propertyType, "오피스텔 데모 목록으로 표시합니다.");
+    }
+
+    if (!apiKey) {
+      return demoResponse(region, propertyType, "청약홈 API 키가 없어 보관 목록으로 표시합니다.");
+    }
 
     // 청약홈 API 호출
     const apiUrl = new URL(
@@ -134,7 +188,10 @@ export async function GET(request: NextRequest) {
     );
     apiUrl.searchParams.set("page", page.toString());
     apiUrl.searchParams.set("perPage", perPage.toString());
-    apiUrl.searchParams.set("cond[SUBSCRPT_AREA_CODE_NM::EQ]", region);
+    const apiRegion = region === "경기남부" || region === "경기북부" ? "경기" : region;
+    if (apiRegion !== "전국") {
+      apiUrl.searchParams.set("cond[SUBSCRPT_AREA_CODE_NM::EQ]", apiRegion);
+    }
     apiUrl.searchParams.set("serviceKey", apiKey);
 
     console.log(`📋 분양권 목록 API 호출: ${region} (page: ${page})`);
@@ -195,17 +252,14 @@ export async function GET(request: NextRequest) {
       perPage,
     });
   } catch (error) {
-    console.error("❌ 분양권 목록 API 에러:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "분양권 목록 조회 중 오류가 발생했습니다",
-        data: [],
-      },
-      { status: 500 }
+    console.warn("분양권 목록 API fallback:", error);
+    const { searchParams } = new URL(request.url);
+    const region = searchParams.get("region") || "전국";
+    const propertyType = (searchParams.get("type") || "APARTMENT") as PropertyType;
+    return demoResponse(
+      region,
+      propertyType,
+      "청약홈 연결 실패로 보관 목록을 표시합니다."
     );
   }
 }

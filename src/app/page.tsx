@@ -25,6 +25,7 @@ const REGIONS = [
   { label: "전국", photo: null, hot: false },
   { label: "서울", photo: "photo-1538485399081-7191377e8241", hot: true },
   { label: "경기남부", photo: "photo-1560518883-ce09059eeffa", hot: true },
+  { label: "경기북부", photo: "photo-1600585154340-be6161a56a0c", hot: false },
   { label: "인천", photo: "photo-1486406146926-c627a92ad1ab", hot: false },
   { label: "부산", photo: "photo-1494526585095-c41746248156", hot: false },
   { label: "대전", photo: "photo-1449844908441-8829872d2607", hot: false },
@@ -165,22 +166,30 @@ export default function HomePage() {
         </section>
 
         <section className="-mt-2">
-          <div className="hide-scrollbar flex gap-2 overflow-x-auto px-5 pb-1">
-            <button
-              type="button"
+          <div
+            onWheel={(event) => {
+              if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+                event.currentTarget.scrollLeft += event.deltaY;
+              }
+            }}
+            className="hide-scrollbar flex touch-pan-x snap-x gap-2 overflow-x-auto overscroll-x-contain px-5 pb-1"
+            aria-label="지역 바로가기"
+          >
+            <Link
+              href="/category/bunyanggwon"
               aria-label="지역 필터"
               className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-full border border-[var(--line)] bg-white"
             >
               <SlidersHorizontal className="h-[17px] w-[17px] text-[var(--text-strong)]" strokeWidth={2.3} />
-            </button>
+            </Link>
 
             {REGIONS.map((region, index) => {
               const active = index === 0;
               return (
-                <button
+                <Link
                   key={region.label}
-                  type="button"
-                  className={`relative flex h-[42px] shrink-0 items-center gap-2 rounded-full pl-[5px] pr-4 ${
+                  href={`/category/bunyanggwon?region=${encodeURIComponent(region.label)}`}
+                  className={`relative flex h-[42px] shrink-0 snap-center items-center gap-2 rounded-full pl-[5px] pr-4 ${
                     active
                       ? "bg-[var(--brand-ink)] text-white"
                       : "border border-[var(--line)] bg-white text-[var(--text-strong)]"
@@ -206,7 +215,7 @@ export default function HomePage() {
                       HOT
                     </span>
                   )}
-                </button>
+                </Link>
               );
             })}
           </div>
