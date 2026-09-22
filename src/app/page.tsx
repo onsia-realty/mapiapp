@@ -7,6 +7,7 @@ import {
   Building,
   Building2,
   ChevronRight,
+  Eye,
   FileText,
   Heart,
   Hotel,
@@ -20,6 +21,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { MobileLayout } from "@/components/layout/MobileLayout";
+import { mockMapiListings } from "@/lib/mock-mapi";
 
 const REGIONS = [
   { label: "전국", photo: null, hot: false },
@@ -43,54 +45,51 @@ const CATEGORIES = [
   { href: "/category/store", label: "상가·사무실", note: "임대차", icon: Store },
 ];
 
+const FEATURED_FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=700&q=85",
+  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=85",
+  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=700&q=85",
+  "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=700&q=85",
+  "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=700&q=85",
+];
+
+const BUNYANG_FEATURED = [...mockMapiListings]
+  .sort((a, b) => b.viewCount - a.viewCount)
+  .slice(0, 5)
+  .map((item, index) => ({
+    href: `/category/bunyanggwon/${item.apiId || item.bunyanggwonId}/mapi/${item.id}`,
+    title: `${item.propertyName} ${item.dong}동`,
+    location: `${item.type} · ${item.floor}층`,
+    price:
+      item.premiumType === "MINUS"
+        ? `마피 ${Math.abs(item.premium).toLocaleString()}만`
+        : item.premiumType === "PREMIUM"
+          ? `P +${item.premium.toLocaleString()}만`
+          : "P 없음",
+    badge: item.premiumType === "MINUS" ? "마이너스P" : item.premiumType === "PREMIUM" ? "프리미엄" : "분양가",
+    vip: item.viewCount >= 3000,
+    views: item.viewCount,
+    image: item.images[0] || FEATURED_FALLBACK_IMAGES[index],
+  }));
+
+const IJAMAN_FEATURED = [
+  { href: "/category/ijaman/vip1", title: "신혼부부 추천 아파트", location: "서울 · 84㎡", price: "보증금 200만", badge: "이자만", vip: true, views: 5678, image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=700&q=85" },
+  { href: "/category/ijaman/vip2", title: "역세권 풀옵션 오피스텔", location: "서울 · 59㎡", price: "보증금 150만", badge: "VIP", vip: true, views: 3421, image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=700&q=85" },
+  { href: "/category/ijaman/3", title: "강남역 코너 상가", location: "서울 강남 · 85.5㎡", price: "보증금 5,000만", badge: "급매", vip: false, views: 45, image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=700&q=85" },
+  { href: "/category/ijaman/4", title: "가산디지털단지 지식산업센터", location: "경기 광명 · 165.2㎡", price: "보증금 3,000만", badge: "추천", vip: false, views: 28, image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=85" },
+  { href: "/category/ijaman/2", title: "역삼역 도보 3분 신축 오피스텔", location: "서울 강남 · 28.5㎡", price: "전세 3억 5,000만", badge: "역세권", vip: false, views: 12, image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=700&q=85" },
+].sort((a, b) => b.views - a.views).slice(0, 5);
+
 const FEATURED_GROUPS = [
   {
     label: "분양권 전매",
     href: "/category/bunyanggwon",
-    items: [
-      {
-        href: "/category/bunyanggwon/2025000189/mapi/MAPI001",
-        title: "경남아너스빌 101동",
-        location: "용인 · 84A",
-        price: "마피 3,000만",
-        badge: "마이너스P",
-        vip: true,
-        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=700&q=85",
-      },
-      {
-        href: "/category/bunyanggwon/2025000189/mapi/MAPI002",
-        title: "경남아너스빌 102동",
-        location: "용인 · 84B",
-        price: "P 없음",
-        badge: "분양가",
-        vip: false,
-        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=85",
-      },
-    ],
+    items: BUNYANG_FEATURED,
   },
   {
     label: "이자만",
     href: "/category/ijaman",
-    items: [
-      {
-        href: "/category/ijaman/vip1",
-        title: "신혼부부 추천 아파트",
-        location: "서울 · 84㎡",
-        price: "보증금 200만",
-        badge: "이자만",
-        vip: false,
-        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=700&q=85",
-      },
-      {
-        href: "/category/ijaman/vip2",
-        title: "역세권 풀옵션 오피스텔",
-        location: "서울 · 59㎡",
-        price: "보증금 150만",
-        badge: "VIP",
-        vip: true,
-        image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=700&q=85",
-      },
-    ],
+    items: IJAMAN_FEATURED,
   },
 ];
 
@@ -253,13 +252,24 @@ export default function HomePage() {
               <div key={group.label}>
                 <div className="mb-2.5 flex items-center justify-between">
                   <h3 className="text-[15px] font-extrabold tracking-[-0.3px] text-[var(--brand-ink)]">{group.label}</h3>
-                  <Link href={group.href} className="flex items-center text-[11px] font-bold text-[var(--text-muted)]">
-                    전체보기 <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-[var(--brand-purple)]">조회수 TOP 5</span>
+                    <Link href={group.href} className="flex items-center text-[11px] font-bold text-[var(--text-muted)]">
+                      전체보기 <ChevronRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
                 </div>
-                <div className="hide-scrollbar -mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-1">
+                <div
+                  onWheel={(event) => {
+                    if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+                      event.currentTarget.scrollLeft += event.deltaY;
+                    }
+                  }}
+                  className="hide-scrollbar -mx-5 flex touch-pan-x snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-5 pb-1"
+                  aria-label={`${group.label} 조회수 상위 매물 슬라이드`}
+                >
                   {group.items.map((item) => (
-                    <Link key={item.title} href={item.href} className="relative w-[260px] shrink-0 snap-start overflow-hidden rounded-[18px] border border-[var(--line)] bg-white shadow-[0_7px_20px_rgba(27,23,38,.05)] active:scale-[.98]">
+                    <Link key={item.href} href={item.href} className="relative w-[260px] shrink-0 snap-start overflow-hidden rounded-[18px] border border-[var(--line)] bg-white shadow-[0_7px_20px_rgba(27,23,38,.05)] active:scale-[.98]">
                       {item.vip && <span className="gold-fill absolute left-0 top-0 z-10 h-full w-[3px]" />}
                       <div className="relative aspect-[16/10]">
                         <Image src={item.image} alt={item.title} fill sizes="(max-width: 430px) 50vw, 190px" className="object-cover" />
@@ -276,7 +286,10 @@ export default function HomePage() {
                         </span>
                       </div>
                       <div className="p-3">
-                        <p className="text-[10px] font-semibold text-[var(--text-muted)]">{item.location}</p>
+                        <div className="flex items-center justify-between gap-2 text-[10px] font-semibold text-[var(--text-muted)]">
+                          <span>{item.location}</span>
+                          <span className="flex shrink-0 items-center gap-1"><Eye className="h-3 w-3" /> {item.views.toLocaleString()}</span>
+                        </div>
                         <h4 className="mt-1 truncate text-[13px] font-extrabold tracking-[-0.25px] text-[var(--text-strong)]">{item.title}</h4>
                         <p className="mt-2 text-[12.5px] font-black text-[var(--brand-purple)]">{item.price}</p>
                       </div>
