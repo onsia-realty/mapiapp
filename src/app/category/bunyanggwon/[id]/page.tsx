@@ -17,6 +17,11 @@ import { LoanCalculator } from "@/components/calculator/LoanCalculator";
 import { ComplexListingPreview } from "@/components/listing/ComplexListingPreview";
 import { RealEstateListing, getListingsByComplexId } from "@/lib/mock-listings";
 
+interface KakaoGeocoderResult {
+  x: string;
+  y: string;
+}
+
 function toFallbackData(mockItem: (typeof mockBunyanggwon)[number]): BunyanggwonData {
   const unitsLabel = mockItem.features?.find((feature) => feature.includes("세대"));
   const totalUnits = Number(unitsLabel?.replace(/\D/g, "")) || 0;
@@ -82,6 +87,9 @@ export default function BunyanggwonDetailPage() {
   const [apartmentRanking, setApartmentRanking] = useState<ApartmentRankingResult | null>(null);
   const [winningCutoff, setWinningCutoff] = useState<WinningCutoffData | null>(null);
   const [specialSupply, setSpecialSupply] = useState<SpecialSupplyData | null>(null);
+  const [detailSource, setDetailSource] = useState<"live" | "archive">("live");
+  const [winningCutoffChecked, setWinningCutoffChecked] = useState(false);
+  const [specialSupplyChecked, setSpecialSupplyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
@@ -169,7 +177,7 @@ export default function BunyanggwonDetailPage() {
           if (resolved) return;
 
           const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.addressSearch(cleanedAddress, (result: any, status: any) => {
+          geocoder.addressSearch(cleanedAddress, (result: KakaoGeocoderResult[], status: string) => {
             if (resolved) return;
             resolved = true;
 
@@ -241,12 +249,26 @@ export default function BunyanggwonDetailPage() {
           // API 데이터 사용
           console.log("✅ 청약홈 API 데이터 로드 완료:", bunyanggwonResult.data.propertyName);
           setBunyanggwonData(bunyanggwonResult.data);
+          setDetailSource(
+            bunyanggwonResult.source === "archived-public-data" ? "archive" : "live"
+          );
 
-          // 좌표 가져오기: API 공급 주소로 Geocoding (항상 정확한 위치)
+          // 저장 좌표가 있으면 지도와 위치 기반 API를 즉시 표시하고,
+          // 카카오 SDK가 연결된 환경에서는 지오코딩 결과로 다시 보정한다.
           const supplyAddress = bunyanggwonResult.data.address;
           console.log("📍 공급 주소로 좌표 검색:", supplyAddress);
 
-          geocodeAddress(supplyAddress).then((geocodedCoords) => {
+          if (mockItem?.latitude && mockItem?.longitude) {
+            const savedCoords = {
+              lat: mockItem.latitude,
+              lng: mockItem.longitude,
+            };
+            setCoordinates(savedCoords);
+            fetchLocationBasedData(savedCoords, supplyAddress);
+          }
+
+          if (process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY) {
+            geocodeAddress(supplyAddress).then((geocodedCoords) => {
             if (geocodedCoords) {
               console.log("✅ 좌표 변환 성공:", geocodedCoords);
               setCoordinates(geocodedCoords);
@@ -261,7 +283,8 @@ export default function BunyanggwonDetailPage() {
                 fetchLocationBasedData(coords, supplyAddress);
               }
             }
-          });
+            });
+          }
 
           // 3. 주변 시세 조회
           const priceResponse = await fetch(
@@ -283,10 +306,12 @@ export default function BunyanggwonDetailPage() {
               console.log("🎯 당첨 커트라인 로드 완료");
               setWinningCutoff(cutoffResult.data);
             }
+            setWinningCutoffChecked(true);
             if (specialResult?.success && specialResult.data) {
               console.log("🎁 특별공급 신청현황 로드 완료");
               setSpecialSupply(specialResult.data);
             }
+            setSpecialSupplyChecked(true);
           });
 
           // 4. 분양 홈페이지 이미지 조회
@@ -399,6 +424,8 @@ export default function BunyanggwonDetailPage() {
     }
 
     fetchData();
+  // 데이터 함수들은 이 화면 생명주기 동안 같은 API 규약을 사용하며, 매물 ID 변경 때만 재조회한다.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   const item = bunyanggwonData;
@@ -507,6 +534,14 @@ export default function BunyanggwonDetailPage() {
               <span>{item.houseType}</span>
               <span className="text-[#D5DDE9]">|</span>
               <span>{item.region}</span>
+            </div>
+            <div className="mt-3 pt-3 border-t border-[#EDF2F8] flex items-center justify-between gap-3">
+              <span className="text-[11px] font-bold text-[#1D6BF3]">
+                청약홈 · 지도 · 생활 인프라 API 연결
+              </span>
+              <span className="shrink-0 rounded-full bg-[#EBF2FF] px-2.5 py-1 text-[10px] font-extrabold text-[#1D6BF3]">
+                {detailSource === "archive" ? "공공데이터 보관본" : "실시간 연동"}
+              </span>
             </div>
           </div>
         </div>
@@ -808,6 +843,14 @@ export default function BunyanggwonDetailPage() {
             </div>
           </div>
         )}
+        {winningCutoffChecked && !winningCutoff && (
+          <div className="px-5 pt-6">
+            <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">당첨 커트라인 (가점)</h2>
+            <div className="bg-white rounded-[18px] border border-[#E1E8F2] p-4 text-xs text-[#5E6C85]">
+              청약홈 당첨가점 API 연결 완료 · 공개된 가점 결과가 없는 공고입니다.
+            </div>
+          </div>
+        )}
 
         {/* 특별공급 청약접수 현황 (타입별) */}
         {specialSupply && specialSupply.byType.length > 0 && (
@@ -892,9 +935,17 @@ export default function BunyanggwonDetailPage() {
             </div>
           </div>
         )}
+        {specialSupplyChecked && !specialSupply && (
+          <div className="px-5 pt-6">
+            <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">특별공급 청약접수 현황</h2>
+            <div className="bg-white rounded-[18px] border border-[#E1E8F2] p-4 text-xs text-[#5E6C85]">
+              청약홈 특별공급 API 연결 완료 · 공개된 유형별 접수 결과가 없습니다.
+            </div>
+          </div>
+        )}
 
         {/* 주변 시세 정보 (API 연동) */}
-        {nearbyPrices.length > 0 && (
+        {nearbyPrices.length > 0 ? (
           <div className="px-5 pt-6">
             <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">주변 시세 정보 (실거래가)</h2>
             <div className="bg-[#EBF2FF] rounded-[14px] p-3 mb-3">
@@ -921,6 +972,13 @@ export default function BunyanggwonDetailPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        ) : (
+          <div className="px-5 pt-6">
+            <h2 className="text-[17px] font-extrabold text-[#0B1E40] tracking-[-0.3px] mb-3">주변 시세 정보 (실거래가)</h2>
+            <div className="bg-white rounded-[18px] border border-[#E1E8F2] p-4 text-xs text-[#5E6C85]">
+              국토교통부 실거래가 API 연결 완료 · 현재 주소 기준으로 조회된 인근 거래가 없습니다.
             </div>
           </div>
         )}

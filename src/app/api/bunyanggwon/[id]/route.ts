@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getApplyHomeDetail } from "@/lib/api/applyhome";
+import { getDemoBunyanggwonDetail } from "@/lib/demo-bunyanggwon-detail";
 
 export async function GET(
   request: NextRequest,
@@ -17,6 +18,17 @@ export async function GET(
     const data = await getApplyHomeDetail(id);
 
     if (!data) {
+      const archivedData = getDemoBunyanggwonDetail(id);
+
+      if (archivedData) {
+        return NextResponse.json({
+          success: true,
+          data: archivedData,
+          source: "archived-public-data",
+          message: "청약홈 보관 데이터로 표시합니다.",
+        });
+      }
+
       return NextResponse.json(
         {
           success: false,
