@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f5f8;
+  --foreground: #191622;
+  --brand-ink: #1b1726;
+  --brand-purple: #7b2ff7;
+  --brand-purple-strong: #6721dc;
+  --brand-purple-soft: #f1ebff;
+  --brand-gold: #d7ae54;
+  --gold-hi: #f6e4ae;
+  --gold-lo: #9d7530;
+  --gold-ink: #3a2c10;
+  --surface: #ffffff;
+  --surface-muted: #f6f5f8;
+  --line: #e9e6ee;
+  --text-strong: #191622;
+  --text-muted: #7c7687;
+  --danger: #e5484d;
+}
+
+.gold-fill {
+  background: linear-gradient(135deg, var(--gold-hi), var(--brand-gold) 46%, var(--gold-lo));
+  color: var(--gold-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 2px 8px rgba(58, 44, 16, 0.3);
+}
+
+.gold-text {
+  background-image: linear-gradient(100deg, var(--gold-hi), var(--brand-gold) 52%, #c59a40);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Pretendard Variable", Pretendard, system-ui, -apple-system,
+    "Apple SD Gothic Neo", "Noto Sans KR", Arial, Helvetica, sans-serif;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
