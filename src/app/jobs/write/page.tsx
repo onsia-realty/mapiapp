@@ -1,5 +1,7 @@
 "use client";
 
+import { JobVideo } from "@/components/listing/JobVideo";
+import { youtubeId } from "@/lib/job-video";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -12,7 +14,6 @@ import {
   Search,
   Calendar,
   CheckCircle2,
-  Video,
   BriefcaseBusiness,
 } from "lucide-react";
 import { MobileLayout } from "@/components/layout/MobileLayout";
@@ -20,7 +21,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { cn } from "@/lib/utils";
 
 /* 구인글 등록 — 마피 원본 폼 베이스 + 분양의신 장점 이식
-   (모집 직책 칩·즉시 투입·급여 방식·수수료 퀵버튼·혜택 미제공/지원 토글·임시저장) */
+   (모집 직책 칩·즉시 투입·급여 방식·수수료 퀵버튼·혜택 미제공/지원 토글) */
 
 const POSITION_OPTIONS = {
   "공인 중개사": ["소속 공인중개사", "중개보조원", "실장", "기타"],
@@ -117,6 +118,7 @@ export default function GuinWritePage() {
   const [startDate, setStartDate] = useState("");
   const [immediate, setImmediate] = useState(false);
   const [payType, setPayType] = useState<string>("");
+  const [salary, setSalary] = useState("");
   const [fees, setFees] = useState<Record<string, number>>({});
   const [feeConsult, setFeeConsult] = useState(false);
   const [workAddress, setWorkAddress] = useState("");
@@ -135,8 +137,12 @@ export default function GuinWritePage() {
   // 연락처
   const [manager, setManager] = useState("");
   const [phone, setPhone] = useState("");
-  const [imageCount, setImageCount] = useState(0);
-  const [videoCount, setVideoCount] = useState(0);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoError, setVideoError] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const [formError, setFormError] = useState("");
+  const videoCount = youtubeId(videoUrl) ? 1 : 0;
+  const [savedId, setSavedId] = useState("");
 
   const togglePosition = (p: string) => {
     setPositions((prev) =>
@@ -148,9 +154,31 @@ export default function GuinWritePage() {
     setMeals((prev) => (prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]));
   };
 
-  const handleDraft = () => alert("임시저장 되었습니다. (데모)");
-  const displayTitle = title || (jobType === "공인 중개사" ? "지역 전문 공인중개사 채용" : "프리미엄 현장 분양상담사 모집");
-  const displayCompany = officeName || siteName || "MAPI 파트너 채용처";
+  const displayTitle = title.trim();
+  const displayCompany = (jobType === "공인 중개사" ? officeName : siteName).trim();
+  const selectedPositions = positions.filter((p) => jobType && (POSITION_OPTIONS[jobType] as readonly string[]).includes(p));
+  const activeBenefits = jobType === "공인 중개사" ? AGENT_BENEFIT_ITEMS : SALES_BENEFIT_ITEMS;
+  const conditionRows: [string, string][] = [
+    ...(jobType === "공인 중개사" ? [
+      ["주요 중개 분야", propertyType], ["공인중개사 자격", licenseRequired],
+      ["고용 형태", employmentType], ["요구 경력", experience],
+    ] as [string, string][] : [
+      ["총 세대수", households], ["분양가", salePrice], ["입주예정일", moveInDate],
+    ] as [string, string][]),
+    ["모집 직책", selectedPositions.join(" · ")],
+    ["근무 시작", immediate ? "즉시 투입" : startDate],
+    ["급여 방식", payType],
+    ["급여 조건", payType === "계약수수료"
+      ? feeConsult ? "상담 시 문의" : selectedPositions.map((p) => `${p}: ${fees[p] ? `${fees[p].toLocaleString()}만원` : "미입력"}`).join("\n")
+      : salary],
+    ["근무지", workAddress], ["근무 시간", workTime], ["휴무", holiday],
+    ...(jobType === "분양 상담사" ? [
+      ["일비", dailyPayNone ? "미제공" : dailyPay ? `${dailyPay}원` : "미입력"],
+      ["식사", mealNone || !meals.length ? "미제공" : meals.join(" · ")],
+    ] as [string, string][] : []),
+    ...activeBenefits.map((b): [string, string] => [b, benefits[b]]),
+    ["담당자", manager], ["연락처", phone],
+  ];
 
   // 1단계: 유형 선택
   if (!jobType) {
@@ -164,7 +192,7 @@ export default function GuinWritePage() {
               <button
                 key={t}
                 type="button"
-                onClick={() => setJobType(t)}
+                onClick={() => { setJobType(t); setPositions((prev) => prev.filter((p) => (POSITION_OPTIONS[t] as readonly string[]).includes(p))); }}
                 className="bg-white rounded-[20px] p-6 flex flex-col items-center gap-3 shadow-[0_2px_10px_rgba(27,19,48,.05)] active:scale-[0.97] transition-transform"
               >
                 <div className={`w-14 h-14 rounded-2xl ${i === 0 ? "bg-[#EDE9FE]" : "bg-[#FEF3C7]"} flex items-center justify-center`}>
@@ -187,21 +215,21 @@ export default function GuinWritePage() {
   if (stage === "complete") {
     return (
       <MobileLayout hideNav>
-        <PageHeader title="공고 등록 완료" />
+        <PageHeader title="브라우저 저장 완료" />
         <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-6 pb-10 text-center">
           <span className="gold-fill grid h-20 w-20 place-items-center rounded-[26px]">
             <CheckCircle2 className="h-10 w-10" strokeWidth={2.2} />
           </span>
-          <p className="mt-6 text-[10px] font-black tracking-[1.4px] text-[var(--brand-gold)]">REGISTRATION COMPLETE</p>
-          <h1 className="mt-2 text-[24px] font-black tracking-[-.7px] text-[var(--brand-ink)]">채용공고 등록이<br />완료되었습니다</h1>
-          <p className="mt-3 text-[13px] leading-6 text-[var(--text-muted)]">데모에서는 검수 완료 상태로 바로 표시됩니다.<br />실서비스에서는 운영자 검수 후 게시됩니다.</p>
+          <p className="mt-6 text-[10px] font-black tracking-[1.4px] text-[var(--brand-gold)]">SAVED IN THIS BROWSER</p>
+          <h1 className="mt-2 text-[24px] font-black tracking-[-.7px] text-[var(--brand-ink)]">공고 미리보기가<br />브라우저에 저장되었습니다</h1>
+          <p className="mt-3 text-[13px] leading-6 text-[var(--text-muted)]">공개 게시나 운영자 접수는 진행되지 않습니다.<br />브라우저 데이터를 삭제하면 저장한 공고도 삭제됩니다.</p>
           <div className="mt-7 w-full rounded-[20px] border border-[var(--line)] bg-white p-4 text-left shadow-[0_8px_24px_rgba(27,23,38,.06)]">
             <span className="rounded-full bg-[var(--brand-purple-soft)] px-2.5 py-1 text-[10px] font-black text-[var(--brand-purple)]">{jobType}</span>
             <h2 className="mt-3 text-[16px] font-black text-[var(--brand-ink)]">{displayTitle}</h2>
             <p className="mt-1 text-[12px] text-[var(--text-muted)]">{displayCompany}</p>
           </div>
           <div className="mt-7 grid w-full grid-cols-2 gap-3">
-            <Link href="/jobs/guin1" className="rounded-[15px] border border-[var(--brand-purple)] py-3.5 text-[14px] font-black text-[var(--brand-purple)]">등록 공고 보기</Link>
+            <Link href={`/jobs/saved/${savedId}`} className="rounded-[15px] border border-[var(--brand-purple)] py-3.5 text-[14px] font-black text-[var(--brand-purple)]">저장 공고 보기</Link>
             <Link href="/jobs" className="rounded-[15px] bg-[var(--brand-purple)] py-3.5 text-[14px] font-black text-white shadow-[0_6px_16px_rgba(123,47,247,.25)]">구인구직 홈</Link>
           </div>
         </div>
@@ -212,7 +240,7 @@ export default function GuinWritePage() {
   if (stage === "preview") {
     return (
       <MobileLayout hideNav>
-        <PageHeader title="등록 전 미리보기" />
+        <PageHeader title="저장 전 미리보기" />
         <div className="space-y-4 px-4 pb-32 pt-4">
           <div className="relative h-[190px] overflow-hidden rounded-[22px] bg-[var(--brand-ink)] p-5 text-white shadow-[0_12px_28px_rgba(27,23,38,.16)]">
             <div className="absolute -right-8 -top-10 h-40 w-40 rounded-full bg-[var(--brand-gold)]/20 blur-3xl" />
@@ -220,28 +248,29 @@ export default function GuinWritePage() {
             <div className="relative mt-10">
               <p className="text-[11px] font-bold text-white/60">{jobType} · {displayCompany}</p>
               <h1 className="mt-2 text-[21px] font-black leading-[1.3] tracking-[-.5px]">{displayTitle}</h1>
-              <p className="mt-2 line-clamp-1 text-[12px] text-white/65">{content || "함께 성장할 좋은 동료를 기다립니다."}</p>
+              <p className="mt-2 line-clamp-1 text-[12px] text-white/65">{content}</p>
             </div>
           </div>
 
           <Section title="모집 조건" icon={<BriefcaseBusiness className="h-[18px] w-[18px] text-[#7B2FF7]" />}>
-            <div className="flex flex-wrap gap-2">{(positions.length ? positions : ["직급 협의"]).map((p) => <span key={p} className="rounded-full bg-[var(--brand-purple-soft)] px-3 py-1.5 text-[12px] font-bold text-[var(--brand-purple)]">{p}</span>)}</div>
+            <div className="flex flex-wrap gap-2">{(selectedPositions.length ? selectedPositions : ["직급 미입력"]).map((p) => <span key={p} className="rounded-full bg-[var(--brand-purple-soft)] px-3 py-1.5 text-[12px] font-bold text-[var(--brand-purple)]">{p}</span>)}</div>
             <div className="rounded-xl bg-[#F7F6FB] p-4 text-[13px] leading-7 text-[#5F586B]">
-              <p><b className="text-[var(--brand-ink)]">급여</b> · {payType || "면접 후 협의"}</p>
-              <p><b className="text-[var(--brand-ink)]">근무지</b> · {workAddress || "상세 주소 협의"}</p>
-              <p><b className="text-[var(--brand-ink)]">근무 시작</b> · {immediate ? "즉시" : startDate || "협의"}</p>
-              <p><b className="text-[var(--brand-ink)]">미디어</b> · 이미지 {imageCount}장 / 영상 {videoCount}개</p>
+              <p><b className="text-[var(--brand-ink)]">급여</b> · {payType || "미입력"}</p>
+              <p><b className="text-[var(--brand-ink)]">근무지</b> · {workAddress || "미입력"}</p>
+              <p><b className="text-[var(--brand-ink)]">근무 시작</b> · {immediate ? "즉시" : startDate || "미입력"}</p>
+              <p><b className="text-[var(--brand-ink)]">미디어</b> · YouTube 영상 {videoCount}개</p>
             </div>
           </Section>
 
-          <Section title="직급별 보상 · 지원">
-            <div className="space-y-2">{(positions.length ? positions : ["직급 협의"]).map((p) => <div key={p} className="flex items-center justify-between rounded-xl border border-[var(--line)] px-3.5 py-3"><span className="text-[12px] font-bold text-[#6E6787]">{p}</span><span className="text-[14px] font-black text-[var(--brand-purple)]">{feeConsult ? "상담 시 협의" : fees[p] ? `${fees[p].toLocaleString()}만원` : "급여 협의"}</span></div>)}</div>
-            <div className="flex flex-wrap gap-1.5">{Object.entries(benefits).filter(([, v]) => v !== "미제공").map(([key, value]) => <span key={key} className="rounded-full bg-[#FFF7E7] px-2.5 py-1 text-[10px] font-bold text-[#966D1B]">{key.replace("[영업지원] ", "")} · {value}</span>)}</div>
+          {videoCount > 0 && <JobVideo key={videoUrl} url={videoUrl} />}
+          {saveError && <p role="alert" className="text-sm text-red-600">{saveError}</p>}
+          <Section title="입력한 상세 조건">
+            <dl className="divide-y divide-[#EFEBF7]">{conditionRows.map(([label, value]) => <div key={label} className="py-3"><dt className="text-xs text-[#817987]">{label}</dt><dd className="mt-1 whitespace-pre-wrap break-words text-sm">{value || "미입력"}</dd></div>)}</dl>
           </Section>
         </div>
         <div className="fixed bottom-0 left-1/2 z-30 grid w-full max-w-[430px] -translate-x-1/2 grid-cols-[1fr_1.6fr] gap-3 border-t border-[var(--line)] bg-white/95 px-4 pb-5 pt-3 backdrop-blur">
           <button type="button" onClick={() => setStage("form")} className="rounded-[15px] border border-[var(--brand-purple)] py-3.5 text-[14px] font-black text-[var(--brand-purple)]">수정하기</button>
-          <button type="button" onClick={() => setStage("complete")} className="rounded-[15px] bg-[linear-gradient(135deg,#7B2FF7,#A855F7)] py-3.5 text-[14px] font-black text-white shadow-[0_6px_16px_rgba(123,47,247,.3)]">확인 후 등록</button>
+          <button type="button" onClick={() => { try { const id = crypto.randomUUID(); localStorage.setItem(`mapi-job-${id}`, JSON.stringify({ title: displayTitle, company: displayCompany, address: workAddress, videoUrl, jobType, manager, phone, content, workTime, holiday, payType, dailyPay: dailyPayNone ? "" : dailyPay, ...Object.fromEntries(conditionRows.map(([label, value]) => [`condition:${label}`, value])), createdAt: new Date().toISOString() })); setSavedId(id); setStage("complete"); } catch { setSaveError("이 브라우저에 저장하지 못했습니다. 저장 공간 설정을 확인해주세요."); } }} className="rounded-[15px] bg-[linear-gradient(135deg,#7B2FF7,#A855F7)] py-3.5 text-[14px] font-black text-white shadow-[0_6px_16px_rgba(123,47,247,.3)]">브라우저에 저장</button>
         </div>
       </MobileLayout>
     );
@@ -317,19 +346,21 @@ export default function GuinWritePage() {
         <Section title="이미지 · 영상 첨부" icon={<ImagePlus className="w-[18px] h-[18px] text-[#7B2FF7]" strokeWidth={2} />}>
           <button
             type="button"
-            onClick={() => setImageCount((count) => Math.min(5, count + 1))}
+            disabled
             className="w-full border-2 border-dashed border-[#E9E4F5] rounded-xl py-10 flex flex-col items-center gap-2 text-gray-400"
           >
             <Upload className="w-9 h-9 text-[#C9C2DC]" />
-            <div className="text-[14px] text-[#6E6787] font-semibold">클릭하여 이미지 추가 ({imageCount}/5)</div>
-            <div className="text-[12px] text-[#C9C2DC]">PNG, JPG (장당 최대 5MB · 4:3 노출)</div>
+            <div className="text-[14px] text-[#6E6787] font-semibold">이미지 첨부 · 준비 중</div>
+            <div className="text-[12px] text-[#817987]">데모 화면이며 이미지 업로드·저장은 지원하지 않습니다.</div>
           </button>
-          <button type="button" onClick={() => setVideoCount((count) => Math.min(1, count + 1))} className="flex w-full items-center gap-3 rounded-xl border border-[#E9E4F5] px-4 py-3 text-left">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--brand-purple-soft)]"><Video className="h-5 w-5 text-[var(--brand-purple)]" /></span>
-            <span className="flex-1"><b className="block text-[13px] text-[var(--brand-ink)]">현장 소개 영상</b><span className="text-[11px] text-[var(--text-muted)]">MP4 1개 · 최대 30초</span></span>
-            <span className="text-[12px] font-black text-[var(--brand-purple)]">{videoCount ? "첨부 완료" : "추가"}</span>
-          </button>
-          {(imageCount > 0 || videoCount > 0) && <div className="flex gap-2">{imageCount > 0 && <span className="rounded-full bg-[#EAF8EF] px-3 py-1.5 text-[11px] font-bold text-[#188650]">이미지 {imageCount}장</span>}{videoCount > 0 && <span className="rounded-full bg-[#EDE9FE] px-3 py-1.5 text-[11px] font-bold text-[#7B2FF7]">영상 {videoCount}개</span>}</div>}
+          <Field label="소개 영상 · YouTube 링크">
+            <input aria-label="YouTube 영상 링크" type="url" value={videoUrl} onChange={(e) => { setVideoUrl(e.target.value); setVideoError(""); }} placeholder="https://www.youtube.com/watch?v=..." className={inputCls} />
+            <p className="mt-2 text-xs leading-5 text-[#817987]">일반 영상·Shorts·공유 링크를 붙여넣으세요. 공개 또는 일부 공개이며 외부 재생을 허용한 영상만 재생됩니다.</p>
+            {videoUrl && !videoCount && <p className="mt-2 text-xs text-amber-700">영상 링크 형식을 확인해주세요.</p>}
+            {videoError && <p role="alert" className="mt-2 text-xs text-red-600">{videoError}</p>}
+            {videoCount > 0 && <div className="mt-4"><JobVideo key={videoUrl} url={videoUrl} /><button type="button" onClick={() => setVideoUrl("")} className="mt-2 text-xs underline">영상 제거</button></div>}
+          </Field>
+          {videoCount > 0 && <span className="inline-block rounded-full bg-[#EDE9FE] px-3 py-1.5 text-[11px] font-bold text-[#7B2FF7]">영상 {videoCount}개</span>}
         </Section>
 
         {/* 모집 조건 — 분양의신 장점 이식 */}
@@ -434,7 +465,7 @@ export default function GuinWritePage() {
 
           {(payType === "기본급" || payType === "기본급 + 인센") && (
             <Field label="급여 조건" required>
-              <input type="text" placeholder="예: 기본급 250만 + 인센티브" className={inputCls} />
+              <input type="text" value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="예: 기본급 250만 + 인센티브" className={inputCls} />
             </Field>
           )}
 
@@ -579,22 +610,16 @@ export default function GuinWritePage() {
           <p>· 등록된 공고의 로고·이미지·상세요강은 제휴를 통해 외부 채널에 게시될 수 있습니다.</p>
         </div>
 
-        {/* 임시저장 + 등록 (분양의신 패턴) */}
-        <div className="grid grid-cols-[1fr_1.6fr] gap-3">
+        <p className="text-xs leading-5 text-[#817987]">제목, 중개업소명 또는 현장명, 담당자명, 연락처를 입력하면 미리볼 수 있습니다. 이 데모는 현재 브라우저에만 저장됩니다.</p>
+        {formError && <p role="alert" className="text-sm text-red-600">{formError}</p>}
+        <div className="grid gap-3">
           <button
             type="button"
-            onClick={handleDraft}
-            className="bg-white border-[1.5px] border-[#7B2FF7] text-[#7B2FF7] text-base font-extrabold rounded-2xl py-4"
-          >
-            임시저장
-          </button>
-          <button
-            type="button"
-            onClick={() => setStage("preview")}
+            onClick={() => { if (!displayTitle || !displayCompany || !manager.trim() || !/^[0-9+() -]+$/.test(phone) || phone.replace(/\D/g, "").length < 9) { setFormError("공고 제목, 중개업소명 또는 현장명, 담당자명과 올바른 연락처를 입력해주세요."); return; } if (videoUrl.trim() && !youtubeId(videoUrl)) { setVideoError("올바른 YouTube 영상 링크를 입력해주세요."); setFormError("영상 링크를 확인해주세요."); return; } setFormError(""); setVideoError(""); setStage("preview"); window.scrollTo(0, 0); }}
             className="text-white text-base font-extrabold rounded-2xl py-4 shadow-[0_6px_16px_rgba(123,47,247,.3)] active:scale-[0.98] transition-transform"
             style={{ background: "linear-gradient(135deg,#7B2FF7,#A855F7)" }}
           >
-            미리보기 · 등록
+            공고 미리보기
           </button>
         </div>
       </div>

@@ -6,32 +6,9 @@ import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { ChevronLeft, MapPinned } from "lucide-react";
 
-// Mock 데이터
-const mockApartment = [
-  {
-    id: "1",
-    propertyName: "래미안 퍼스티지",
-    address: "서울시 서초구 반포동",
-    dealType: "SALE",
-    price: 120000,
-    exclusiveArea: 114.5,
-    floor: "23층/35층",
-    region: "서울",
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=400&fit=crop",
-  },
-  {
-    id: "2",
-    propertyName: "힐스테이트 강남",
-    address: "서울시 강남구 역삼동",
-    dealType: "RENT",
-    deposit: 50000,
-    monthlyRent: 150,
-    exclusiveArea: 84.9,
-    floor: "15층/25층",
-    region: "서울",
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&h=400&fit=crop",
-  },
-];
+import { RENTAL_DEMO_LISTINGS } from "@/lib/rental-demo";
+
+const mockApartment = RENTAL_DEMO_LISTINGS.apartment;
 
 const TYPE_TABS: { value: "SALE" | "RENT" | "MONTHLY"; label: string }[] = [
   { value: "SALE", label: "매매" },
@@ -130,8 +107,9 @@ export default function ApartmentPage() {
         ) : (
           <div className="flex flex-col gap-2.5">
             {filteredData.map((item) => (
-              <div
+              <Link
                 key={item.id}
+                href={`/rental/apartment/${item.id}`}
                 className="block bg-white rounded-[18px] p-[14px] shadow-[0_2px_10px_rgba(27,19,48,.05)] active:scale-[0.99] transition-transform"
               >
                 <div className="flex items-start gap-[13px]">
@@ -178,18 +156,18 @@ export default function ApartmentPage() {
                               {item.deposit?.toLocaleString()}만
                             </div>
                           </div>
-                          <div className="text-right">
+                          {item.dealType === "MONTHLY" && <div className="text-right">
                             <div className="text-[11px] font-semibold text-[#9A93AC]">월세</div>
                             <div className="text-[15px] font-extrabold text-[#7B2FF7]">
                               {item.monthlyRent}만
                             </div>
-                          </div>
+                          </div>}
                         </>
                       )}
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

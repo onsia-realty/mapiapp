@@ -1,4 +1,5 @@
 "use client";
+import { BrokerageInfo } from "@/components/listing/BrokerageInfo";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -101,11 +102,10 @@ export default function MapiDetailPage() {
     );
   }
 
-  // 동일 단지 평균 매매가 계산 (실거래가 기준)
+  // 조회 지역 거래 표본의 단순 평균
   const avgPrice = nearbyPrices.length > 0
     ? Math.round(nearbyPrices.reduce((sum, p) => sum + p.recentPrice, 0) / nearbyPrices.length)
     : 0;
-  const priceDiff = avgPrice > 0 ? listing.salePrice - avgPrice : 0;
 
   return (
     <MobileLayout hideNav>
@@ -317,32 +317,24 @@ export default function MapiDetailPage() {
           </div>
         </div>
 
-        {/* 주변 시세 (API) */}
+        {/* 조회 지역 거래 참고자료 */}
         {avgPrice > 0 && (
           <div className="px-5 pt-6">
-            <h2 className="text-sm font-bold text-gray-900 mb-3">주변 시세 (API)</h2>
+            <h2 className="text-sm font-bold text-gray-900 mb-3">조회 지역 거래 참고자료</h2>
             <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-2">동일 단지 평균 매매가</div>
+              <div className="text-sm text-gray-600 mb-2">조회된 거래 {nearbyPrices.length}건 단순 평균</div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-gray-700">
-                  {listing.type}타입
-                </span>
                 <span className="font-bold text-gray-900">{formatPrice(avgPrice)}</span>
               </div>
-              <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                <span className="text-gray-700">현재 매물</span>
-                <span className={`font-bold ${priceDiff < 0 ? "text-blue-600" : "text-red-500"}`}>
-                  {formatPrice(listing.salePrice)} (평균 대비 {priceDiff < 0 ? "" : "+"}{formatPrice(Math.abs(priceDiff)).replace("만원", "")}만)
-                </span>
-              </div>
+              <p className="pt-3 border-t border-gray-200 text-xs leading-5 text-gray-500">조회된 지역의 일부 거래 표본입니다. 서로 다른 단지와 면적이 포함되어 있으며, 동일 단지·동일 주택의 시세나 현재 매물의 가치를 의미하지 않습니다.</p>
             </div>
           </div>
         )}
 
-        {/* 실거래 TOP3 (API) */}
+        {/* 조회 지역 거래 사례 */}
         {nearbyPrices.length > 0 && (
           <div className="px-5 pt-6">
-            <h2 className="text-sm font-bold text-gray-900 mb-3">실거래 TOP3 (API)</h2>
+            <h2 className="text-sm font-bold text-gray-900 mb-3">조회 지역 거래 사례</h2>
             <div className="space-y-2">
               {nearbyPrices.slice(0, 3).map((price, index) => (
                 <div
@@ -351,10 +343,10 @@ export default function MapiDetailPage() {
                 >
                   <div>
                     <div className="text-sm text-gray-900">
-                      {price.transactionDate} {listing.dong}동 {1000 + index * 100 + 1}호
+                      {price.apartmentName}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {listing.type} · {formatPrice(price.recentPrice)} · {price.floor}층
+                      {price.transactionDate} · 전용 {price.exclusiveArea}㎡ · {price.floor}층 · {formatPrice(price.recentPrice)}
                     </div>
                   </div>
                 </div>
@@ -403,6 +395,7 @@ export default function MapiDetailPage() {
         </div>
 
         {/* 중개사 정보 */}
+        <BrokerageInfo phone={listing.broker.phone || ""} />
         <div className="px-5 pt-6">
           <h2 className="text-sm font-bold text-gray-900 mb-3">중개사 정보</h2>
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">

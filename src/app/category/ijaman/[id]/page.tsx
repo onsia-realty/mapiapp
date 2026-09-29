@@ -1,4 +1,5 @@
 "use client";
+import { BrokerageInfo } from "@/components/listing/BrokerageInfo";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -62,6 +63,7 @@ export default function IjamanDetailPage() {
 
         <Section title="가격 · 입주 조건"><div className="overflow-hidden rounded-xl border border-[var(--line)]">{[["최초 보증금", item.originalDeposit], ["현재 보증금", item.deposit], ["월 부담액", item.monthly], ["관리비", item.maintenance], ["입주 가능일", item.moveIn]].map(([label, value], index) => <div key={label} className={cnRow(index)}><span className="w-28 shrink-0 bg-[var(--surface-muted)] px-4 py-3 text-[12px] font-bold text-[var(--text-muted)]">{label}</span><span className="flex-1 px-4 py-3 text-right text-[13px] font-bold text-[var(--brand-ink)]">{value}</span></div>)}</div></Section>
         <Section title="매물 정보"><div className="grid grid-cols-2 gap-2">{[["면적", item.area], ["층수", item.floor], ["입주", item.moveIn], ["관리비", item.maintenance]].map(([label, value]) => <div key={label} className="rounded-[14px] bg-[var(--surface-muted)] p-3"><p className="text-[10px] font-bold text-[var(--text-muted)]">{label}</p><p className="mt-1 text-[12.5px] font-black text-[var(--brand-ink)]">{value}</p></div>)}</div><div className="mt-3 flex flex-wrap gap-2">{item.features.map((feature) => <span key={feature} className="inline-flex items-center gap-1 rounded-full bg-[#EAF8EF] px-2.5 py-1.5 text-[10.5px] font-bold text-[#188650]"><Check className="h-3 w-3" />{feature}</span>)}</div><p className="mt-4 text-[13px] leading-6 text-[#625B6E]">{item.description}</p></Section>
+        <BrokerageInfo phone={item.broker.phone} />
         <Section title="중개사 정보"><div className="flex items-center gap-3"><span className="gold-fill grid h-12 w-12 shrink-0 place-items-center rounded-[15px]"><Building2 className="h-6 w-6" /></span><div><p className="text-[14px] font-black text-[var(--brand-ink)]">{item.broker.office}</p><p className="mt-1 flex items-center gap-1 text-[10.5px] font-bold text-[#188650]"><ShieldCheck className="h-3.5 w-3.5" />MAPI 인증 중개업소</p></div></div><div className="mt-4 space-y-2 border-t border-[var(--line)] pt-4 text-[12px]"><p><span className="inline-block w-20 text-[var(--text-muted)]">담당 중개사</span><b>{item.broker.manager}</b></p><p><span className="inline-block w-20 text-[var(--text-muted)]">사무소 주소</span>{item.broker.address}</p><p><span className="inline-block w-20 text-[var(--text-muted)]">등록번호</span>{item.broker.registration}</p></div></Section>
         <div className="flex items-center gap-2 rounded-[16px] border border-[#F1E2B6] bg-[#FFFBEB] p-4 text-[11px] leading-5 text-[#74633C]"><CalendarDays className="h-5 w-5 shrink-0" />현장 방문 전 가격과 이자 지원 조건이 유효한지 중개사에게 다시 확인해 주세요.</div>
       </div>

@@ -6,20 +6,9 @@ import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { ChevronLeft, MapPinned } from "lucide-react";
 
-const mockOfficetel = [
-  {
-    id: "1",
-    propertyName: "힐스테이트 강남 오피스텔",
-    address: "서울시 강남구 역삼동",
-    dealType: "MONTHLY",
-    deposit: 5000,
-    monthlyRent: 80,
-    exclusiveArea: 28.5,
-    floor: "8층/15층",
-    region: "서울",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=400&fit=crop",
-  },
-];
+import { RENTAL_DEMO_LISTINGS } from "@/lib/rental-demo";
+
+const mockOfficetel = RENTAL_DEMO_LISTINGS.officetel;
 
 const DEAL_TABS: { value: "SALE" | "RENT" | "MONTHLY"; label: string }[] = [
   { value: "SALE", label: "매매" },
@@ -119,8 +108,9 @@ export default function OfficetelPage() {
         ) : (
           <div className="flex flex-col gap-2.5">
             {filteredData.map((item) => (
-              <div
+              <Link
                 key={item.id}
+                href={`/rental/officetel/${item.id}`}
                 className="bg-white rounded-[18px] p-[14px] shadow-[0_2px_10px_rgba(27,19,48,.05)] active:scale-[0.99] transition-transform"
               >
                 <div className="flex items-start gap-3">
@@ -169,7 +159,7 @@ export default function OfficetelPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

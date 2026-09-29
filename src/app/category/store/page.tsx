@@ -6,20 +6,9 @@ import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { ChevronLeft, MapPinned } from "lucide-react";
 
-const mockStore = [
-  {
-    id: "1",
-    propertyName: "강남역 1층 상가",
-    address: "서울시 강남구 역삼동",
-    dealType: "MONTHLY",
-    deposit: 30000,
-    monthlyRent: 500,
-    exclusiveArea: 45.5,
-    floor: "1층/10층",
-    region: "서울",
-    image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&h=400&fit=crop",
-  },
-];
+import { RENTAL_DEMO_LISTINGS } from "@/lib/rental-demo";
+
+const mockStore = RENTAL_DEMO_LISTINGS.store;
 
 const DEAL_TABS: { value: "SALE" | "RENT" | "MONTHLY"; label: string }[] = [
   { value: "SALE", label: "매매" },
@@ -119,8 +108,9 @@ export default function StorePage() {
         ) : (
           <div className="flex flex-col gap-2.5">
             {filteredData.map((item) => (
-              <div
+              <Link
                 key={item.id}
+                href={`/rental/store/${item.id}`}
                 className="bg-white rounded-[18px] p-[14px] shadow-[0_2px_10px_rgba(27,19,48,.05)] active:scale-[0.99] transition-transform"
               >
                 <div className="flex items-start gap-3">
@@ -169,7 +159,7 @@ export default function StorePage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

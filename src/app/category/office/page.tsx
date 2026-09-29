@@ -6,20 +6,9 @@ import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { ChevronLeft, MapPinned } from "lucide-react";
 
-const mockOffice = [
-  {
-    id: "1",
-    propertyName: "강남 테헤란로 사무실",
-    address: "서울시 강남구 테헤란로",
-    dealType: "MONTHLY",
-    deposit: 10000,
-    monthlyRent: 300,
-    exclusiveArea: 85.5,
-    floor: "5층/15층",
-    region: "서울",
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&h=400&fit=crop",
-  },
-];
+import { RENTAL_DEMO_LISTINGS } from "@/lib/rental-demo";
+
+const mockOffice = RENTAL_DEMO_LISTINGS.office;
 
 const DEAL_TABS: { value: "SALE" | "RENT" | "MONTHLY"; label: string }[] = [
   { value: "SALE", label: "매매" },
@@ -119,8 +108,9 @@ export default function OfficePage() {
         ) : (
           <div className="flex flex-col gap-2.5">
             {filteredData.map((item) => (
-              <div
+              <Link
                 key={item.id}
+                href={`/rental/office/${item.id}`}
                 className="bg-white rounded-[18px] p-[14px] shadow-[0_2px_10px_rgba(27,19,48,.05)] active:scale-[0.99] transition-transform"
               >
                 <div className="flex items-start gap-3">
@@ -169,7 +159,7 @@ export default function OfficePage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

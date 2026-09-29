@@ -17,30 +17,9 @@ const IMG = {
   tower: "https://images.unsplash.com/photo-1460317442991-0ec209397118?w=1000&h=1400&fit=crop",
 };
 
-type JobAudience = "공인중개사" | "분양상담사";
-interface JobItem { id: string; audience: JobAudience; title: string; region: string; pay: string; image: string; due: string; }
+import { VIP_JOBS } from "@/lib/vip-jobs";
 
-const HOT_JOBS: JobItem[] = [
-  { id: "hot-sales", audience: "분양상담사", title: "힐스빌리지 수지구청역\n분양팀 첫 조직", region: "경기남부", pay: "팀 RT 600만원", image: IMG.apartment, due: "NOW" },
-  { id: "hot-agent", audience: "공인중개사", title: "마포 대단지 전담\n공인중개사", region: "서울", pay: "기본급 280만 + 성과급", image: IMG.city, due: "D−5" },
-  { id: "hot-songdo", audience: "분양상담사", title: "송도 센트럴파크\n오피스텔 팀원", region: "인천", pay: "팀원 RT 720만원", image: IMG.tower, due: "D−3" },
-];
 
-const PLACES = [
-  { name: "서울", english: "SEOUL", count: 7, image: IMG.street },
-  { name: "경기남부", english: "GYEONGGI S.", count: 6, image: IMG.apartment },
-  { name: "인천", english: "INCHEON", count: 4, image: IMG.tower },
-  { name: "부산", english: "BUSAN", count: 2, image: IMG.house },
-];
-
-const REGION_JOBS: JobItem[] = [
-  { id: "seoul-agent", audience: "공인중개사", title: "강남 상업용 부동산\n경력 중개사", region: "서울", pay: "성과보수 60%", image: IMG.street, due: "HOT" },
-  { id: "south-sales", audience: "분양상담사", title: "동탄역 신축 대단지\n팀장·팀원", region: "경기남부", pay: "팀 RT 900만원", image: IMG.apartment, due: "NEW" },
-  { id: "north-sales", audience: "분양상담사", title: "옥정중앙역 역세권\n현장 첫 조직", region: "경기북부", pay: "팀원 RT 650만원", image: IMG.house, due: "OPEN" },
-  { id: "incheon-agent", audience: "공인중개사", title: "청라 오피스텔 소속\n공인중개사", region: "인천", pay: "수수료 55%", image: IMG.tower, due: "NEW" },
-  { id: "busan-sales", audience: "분양상담사", title: "해운대 하이엔드\n주거상품 상담사", region: "부산", pay: "팀 RT 1,000만원", image: IMG.office, due: "HOT" },
-  { id: "daejeon-agent", audience: "공인중개사", title: "도안신도시 입주장\n중개 파트너", region: "대전", pay: "월 300만 + 인센티브", image: IMG.city, due: "OPEN" },
-];
 
 const CANDIDATES = [
   { id: "gujik1", role: "공인중개사", title: "아파트 입주장·전월세 실무 가능합니다", region: "서울·경기", career: "10년", status: "즉시" },
@@ -54,8 +33,6 @@ function EditorialHeading({ index, eyebrow, children }: { index: string; eyebrow
 
 export default function JobsPage() {
   const [mainTab, setMainTab] = useState<"구인" | "구직">("구인");
-  const [activeRegion, setActiveRegion] = useState("전국");
-  const visibleJobs = activeRegion === "전국" ? REGION_JOBS.slice(0, 3) : REGION_JOBS.filter((job) => job.region === activeRegion);
 
   return <MobileLayout>
     <PageHeader title="MAPI JOBS">
@@ -82,18 +59,18 @@ export default function JobsPage() {
       </section>
 
       <section className="bg-[#17131D] py-14 text-white">
-        <div className="px-4"><EditorialHeading index="02" eyebrow="TRENDING NOW"><span className="text-white">지금 가장<br />뜨거운 현장.</span></EditorialHeading></div>
+        <div className="px-4"><EditorialHeading index="02" eyebrow="VIP PARTNERS · AD"><span className="text-white">함께할 사람을 찾는<br />VIP 파트너.</span></EditorialHeading></div>
+        <p className="px-4 pb-5 text-[11px] leading-5 text-white/65">공인중개사와 분양현장의 유료 소개 공간입니다.<br />현재 소개는 샘플 공고이며 실제 결제 광고가 아닙니다.</p>
         <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {HOT_JOBS.map((job, index) => <Link key={job.id} href="/jobs/guin1" className="relative h-[430px] w-[330px] shrink-0 snap-center overflow-hidden bg-black"><Image src={job.image} alt={job.title.replace("\n", " ")} fill sizes="330px" loading={index === 0 ? "eager" : "lazy"} className="object-cover" /><div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/90" /><div className="absolute inset-x-0 top-0 flex justify-between p-5 text-[9px] font-black tracking-[1.5px]"><span>{String(index + 1).padStart(2, "0")} / HOT</span><span className="text-[#E6C56D]">{job.due}</span></div><div className="absolute inset-x-0 bottom-0 p-5"><p className="text-[10px] font-bold tracking-[1px] text-white/60">{job.audience} · {job.region}</p><h3 className="mt-2 whitespace-pre-line text-[27px] font-black leading-[1.12] tracking-[-1px]">{job.title}</h3><div className="mt-5 flex items-center justify-between border-t border-white/30 pt-4"><span className="text-[13px] font-black text-[#E6C56D]">{job.pay}</span><ArrowUpRight className="h-5 w-5" /></div></div></Link>)}
+          {VIP_JOBS.map((job, index) => <Link key={job.id} href={`/jobs/${job.id}`} className="relative h-[430px] w-[330px] shrink-0 snap-center overflow-hidden bg-black"><Image src={job.image} alt={job.title.replace("\n", " ")} fill sizes="330px" loading={index === 0 ? "eager" : "lazy"} className="object-cover" /><div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/90" /><div className="absolute inset-x-0 top-0 flex justify-between p-5 text-[9px] font-black tracking-[1.5px]"><span>{String(index + 1).padStart(2, "0")} / VIP 광고</span><span className="text-[#E6C56D]">{job.audience}</span></div><div className="absolute inset-x-0 bottom-0 p-5"><p className="text-[10px] font-bold tracking-[1px] text-white/60">{job.audience} · {job.region}</p><h3 className="mt-2 whitespace-pre-line text-[27px] font-black leading-[1.12] tracking-[-1px]">{job.title}</h3><div className="mt-5 flex items-center justify-between border-t border-white/30 pt-4"><span className="text-[13px] font-black text-[#E6C56D]">{job.pay}</span><ArrowUpRight className="h-5 w-5" /></div></div></Link>)}
         </div>
         <p className="px-4 pt-4 text-right text-[9px] font-bold tracking-[1.2px] text-white/40">SWIPE TO EXPLORE →</p>
       </section>
 
-      <section className="px-4 py-14">
-        <EditorialHeading index="03" eyebrow="FIND YOUR PLACE">도시를 고르면<br />기회가 보입니다.</EditorialHeading>
-        <button type="button" onClick={() => setActiveRegion("전국")} className={cn("mb-4 text-[11px] font-black tracking-[1.4px]", activeRegion === "전국" ? "text-[#17131D] underline underline-offset-4" : "text-[#A59DAA]")}>ALL 24</button>
-        <div className="-mr-4 flex gap-2 overflow-x-auto pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{PLACES.map((place) => <button key={place.name} type="button" onClick={() => setActiveRegion(place.name)} className={cn("relative h-[260px] w-[154px] shrink-0 overflow-hidden text-left transition", activeRegion === place.name && "ring-2 ring-[#7952D8] ring-offset-2 ring-offset-[#F4F0E8]")}><Image src={place.image} alt={`${place.name} 채용 현장`} fill sizes="154px" className="object-cover grayscale-[20%]" /><div className="absolute inset-0 bg-gradient-to-b from-black/5 to-black/75" /><div className="absolute inset-x-0 bottom-0 p-4 text-white"><p className="text-[9px] font-bold tracking-[1.2px] text-white/55">{place.english}</p><p className="mt-0.5 text-[22px] font-black">{place.name}</p><p className="mt-1 text-[10px] text-[#E6C56D]">{place.count} OPEN</p></div></button>)}</div>
-        <div className="mt-4 border-t border-[#CFC8BD]">{visibleJobs.map((job, index) => <Link key={job.id} href="/jobs/guin1" className="grid grid-cols-[38px_1fr_auto] items-start gap-2 border-b border-[#CFC8BD] py-5"><span className="font-serif text-[12px] italic text-[#9D958A]">{String(index + 1).padStart(2, "0")}</span><div><p className="text-[9px] font-black tracking-[.8px] text-[#7952D8]">{job.audience} · {job.region}</p><h3 className="mt-1 whitespace-pre-line text-[17px] font-black leading-[1.3] tracking-[-.45px] text-[#17131D]">{job.title}</h3><p className="mt-2 text-[11px] font-black text-[#8C641B]">{job.pay}</p></div><ArrowUpRight className="mt-1 h-4 w-4 text-[#17131D]" /></Link>)}{visibleJobs.length === 0 && <p className="border-b border-[#CFC8BD] py-10 text-center text-[12px] font-bold text-[#8B838E]">등록 준비 중인 지역입니다.</p>}</div>
+      <section className="px-4 py-10">
+        <EditorialHeading index="03" eyebrow="YOUR BRAND, IN FOCUS">우리 팀을 알리는<br />조금 다른 채용.</EditorialHeading>
+        <p className="text-sm leading-6 text-[#756D7E]">사무소의 분위기, 현장의 규모, 함께할 동료.<br />사진과 영상으로 지원자에게 먼저 보여주세요.</p>
+        <Link href="/jobs/vip" className="mt-5 flex items-center justify-between border-y border-[#CFC8BD] py-5 text-sm font-bold">VIP 소개 상품 알아보기<ArrowUpRight className="h-5 w-5" /></Link>
       </section>
 
       <section className="mx-4 border-t border-[#17131D] pt-6"><p className="font-serif text-[15px] italic text-[#7952D8]">Build your team.</p><div className="mt-2 flex items-end justify-between"><h2 className="text-[28px] font-black leading-[1.1] tracking-[-1.2px] text-[#17131D]">좋은 사람을 찾는<br />가장 빠른 시작.</h2><Link href="/jobs/write" className="grid h-14 w-14 place-items-center rounded-full bg-[#17131D] text-white"><ArrowUpRight className="h-5 w-5" /></Link></div></section>

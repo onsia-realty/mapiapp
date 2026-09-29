@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
+import { VIP_JOBS } from "@/lib/vip-jobs";
+import { VipJobDetail } from "@/components/listing/VipJobDetail";
 import Image from "next/image";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -60,10 +63,13 @@ function Section({ title, children }: { title: React.ReactNode; children: React.
 }
 
 export default function JobDetailPage() {
+  const { id } = useParams<{ id: string }>();
   const [slide, setSlide] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
   const [action, setAction] = useState<"contact" | "apply" | "sent" | null>(null);
   const total = JOB_DETAIL.media.length;
+  const vipJob = VIP_JOBS.find((job) => job.id === id);
+  if (vipJob) return <VipJobDetail job={vipJob} />;
 
   return (
     <MobileLayout hideNav>

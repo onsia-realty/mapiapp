@@ -48,12 +48,29 @@ export function findDemoAccount(email: string, password: string) {
   );
 }
 
+let cachedKey = "";
+let cachedAccount: DemoAccount | null = null;
+
 export function readDemoSession(): DemoAccount | null {
   if (typeof window === "undefined") return null;
 
   try {
     const role = window.localStorage.getItem(DEMO_SESSION_KEY) as DemoRole | null;
-    return DEMO_ACCOUNTS.find((account) => account.role === role) ?? null;
+    const profile = role ? window.localStorage.getItem(`mapi-profile-${role}`) : null;
+    const key = JSON.stringify([role, profile]);
+    if (key === cachedKey) return cachedAccount;
+    const base = DEMO_ACCOUNTS.find((account) => account.role === role) ?? null;
+    cachedAccount = base;
+    if (base && profile) {
+      try {
+        const value = JSON.parse(profile);
+        if (value && typeof value.name === "string" && value.name.trim()) {
+          cachedAccount = { ...base, name: value.name.trim(), company: typeof value.company === "string" ? value.company : base.company };
+        }
+      } catch { /* 손상된 저장값은 기본 데모 프로필로 표시합니다. */ }
+    }
+    cachedKey = key;
+    return cachedAccount;
   } catch {
     return null;
   }

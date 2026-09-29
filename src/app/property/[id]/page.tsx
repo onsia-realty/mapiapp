@@ -1,4 +1,5 @@
 "use client";
+import { ReportListing } from "@/components/listing/ReportListing";
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -353,6 +354,7 @@ export default function PropertyDetailPage() {
         {/* 구분선 */}
         <div className="h-2 bg-gray-100" />
 
+        <div className="px-4"><ReportListing listingId={id} /></div>
         {/* 중개사 정보 */}
         <div className="p-4 mb-24">
           <h2 className="text-lg font-bold text-gray-900 mb-4">중개사 정보</h2>

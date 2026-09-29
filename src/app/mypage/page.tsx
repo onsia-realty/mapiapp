@@ -78,7 +78,7 @@ export default function MyPage() {
             <div className="gold-fill flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl"><User className="h-6 w-6" /></div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-lg font-black">{account.name}</h1>
+                <Link href="/mypage/profile" className="text-lg font-black underline decoration-white/30 underline-offset-4" aria-label={`${account.name} 프로필 편집`}>{account.name}</Link>
                 <span className="rounded-full border border-[#d7ae54]/45 bg-[#d7ae54]/10 px-2 py-0.5 text-[10px] font-black text-[#ecd17f]">{account.roleLabel}</span>
               </div>
               <p className="mt-1 truncate text-xs text-white/50">{account.company}</p>
